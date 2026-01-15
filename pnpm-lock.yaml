@@ -111,8 +111,8 @@ importers:
   packages/website:
     dependencies:
       online-editor:
-        specifier: 0.1.0
-        version: 0.1.0(typescript@5.6.3)(vue@3.5.26(typescript@5.6.3))
+        specifier: 0.2.0
+        version: 0.2.0(typescript@5.6.3)(vue@3.5.26(typescript@5.6.3))
     devDependencies:
       '@types/node':
         specifier: ^22.10.2
@@ -1143,8 +1143,8 @@ packages:
   onigasm@2.2.5:
     resolution: {integrity: sha512-F+th54mPc0l1lp1ZcFMyL/jTs2Tlq4SqIHKIXGZOR/VkHkF9A7Fr5rRr5+ZG/lWeRsyrClLYRq7s/yFQ/XhWCA==}
 
-  online-editor@0.1.0:
-    resolution: {integrity: sha512-HmmV1HaRR8D516TW3/HGwrTZPjkMm0dMewVAr8Hv8rTvrQbykYUHWbBH9B+d8oo7FQaY7oSiUG9Im6Fo2N+5Gg==}
+  online-editor@0.2.0:
+    resolution: {integrity: sha512-TJdQdIewUQtxkmjzZn6KzgJM/2LAQibaZWgc+u56XLMSeeCcyQ5Eglx8UV7voD+si6f+5N0EgMtqYoiF3PXmNg==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -2497,7 +2497,7 @@ snapshots:
     dependencies:
       lru-cache: 5.1.1
 
-  online-editor@0.1.0(typescript@5.6.3)(vue@3.5.26(typescript@5.6.3)):
+  online-editor@0.2.0(typescript@5.6.3)(vue@3.5.26(typescript@5.6.3)):
     dependencies:
       '@babel/standalone': 7.28.6
       '@volar/cdn': 1.11.1
