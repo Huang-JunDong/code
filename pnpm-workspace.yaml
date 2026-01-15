@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+
+enablePrePostScripts: true
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - less
+  - vue-demi

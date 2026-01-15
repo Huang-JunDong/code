@@ -1,0 +1,61 @@
+.codeplayer-splitter {
+  --codeplayer-border-color: @border-color;
+  --codeplayer-border-brand: @brand-light-border;
+  display: flex;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  user-select: none;
+  &:hover {
+    user-select: initial;
+  }
+  .splitter-left {
+    border-right: 1px solid var(--codeplayer-border-color);
+    position: relative;
+  }
+  .splitter-right {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+  .splitter-mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 3;
+  }
+  .splitter-mask-hidden {
+    display: none;
+  }
+  .dragger {
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    bottom: 0;
+    right: -3px;
+    width: 6px;
+    cursor: col-resize;
+    &:hover {
+      background-color: @brand-light-border !important;
+    }
+  }
+  .vertical-dragger {
+    position: absolute;
+    z-index: 99;
+    bottom: -3px;
+    height: 6px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    cursor: row-resize;
+    &:hover {
+      background-color: @brand-light-border !important;
+    }
+  }
+}
+.codeplayer-splitter-vertical {
+  flex-direction: column;
+}

@@ -1,0 +1,70 @@
+{
+  "name": "codeplayer",
+  "version": "0.3.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "typings": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./dist/style.css": {
+      "default": "./dist/style.css"
+    }
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "dependencies": {
+    "@babel/standalone": "^7.26.0",
+    "@vue/compiler-sfc": "^3.5.13",
+    "@volar/cdn": "~1.11.1",
+    "@volar/monaco": "~1.11.1",
+    "@volar/typescript": "~1.11.1",
+    "@vue/language-service": "~1.8.27",
+    "compiler-sfc-browser-vue2": "^0.0.5",
+    "fflate": "^0.8.2",
+    "hash-sum": "^2.0.0",
+    "hookable": "^5.5.3",
+    "less": "^4.2.2",
+    "monaco-editor": "~0.41.0",
+    "monaco-editor-textmate": "^4.0.0",
+    "monaco-textmate": "^3.0.1",
+    "monaco-volar": "^0.4.0",
+    "onigasm": "^2.2.5",
+    "path-browserify": "^1.0.1",
+    "sass": "^1.83.0",
+    "sucrase": "^3.35.0",
+    "tippy.js": "^6.3.7",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.26.0",
+    "@types/hash-sum": "^1.0.2",
+    "@types/less": "^3.0.6",
+    "@types/node": "^22.10.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "rollup-plugin-visualizer": "^5.14.0",
+    "typescript": "~5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0",
+    "vue-tsc": "^2.1.10"
+  }
+}

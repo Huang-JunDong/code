@@ -1,0 +1,48 @@
+.codeplayer-files-container {
+  .files-container {
+    .file-list {
+      .file-item {
+        .file-right {
+          .file-option-button {
+            display: none;
+          }
+        }
+        &:hover {
+          color: var(--codeplayer-brand);
+          .file-right {
+            .file-option-button {
+              display: block;
+            }
+          }
+        }
+        .home-operate,
+        .delete-operate {
+          margin-left: 2px;
+        }
+        .current-home-operate {
+          color: @danger !important;
+          display: block !important;
+        }
+        .hide-file-operate {
+          display: none;
+        }
+      }
+    }
+  }
+  .operate-btn {
+    display: flex;
+    align-items: center;
+    .file-option-button {
+      cursor: pointer;
+      &:hover {
+        color: var(--codeplayer-brand);
+      }
+      &:active {
+        color: var(--codeplayer-brand-active);
+      }
+    }
+  }
+  .import-map-container {
+    border-top: 1px solid @border-color;
+  }
+}
