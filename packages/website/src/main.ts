@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import 'codeplayer/dist/style.css';
+import 'online-editor/dist/style.css';
 
 import App from './App.vue';
 

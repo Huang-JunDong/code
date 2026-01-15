@@ -16,6 +16,6 @@
     "vue-tsc": "^2.1.10"
   },
   "dependencies": {
-    "codeplayer": "workspace:*"
+    "online-editor": "workspace:*"
   }
 }

@@ -110,7 +110,7 @@ importers:
 
   packages/website:
     dependencies:
-      codeplayer:
+      online-editor:
         specifier: workspace:*
         version: link:../core
     devDependencies:

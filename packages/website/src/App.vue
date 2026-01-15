@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import CodePlayer, { CodePlayerOptions, AppType } from 'codeplayer';
+import CodePlayer, { CodePlayerOptions, AppType } from 'online-editor';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const MOBILE_BREAKPOINT = 768;
