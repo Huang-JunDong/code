@@ -1,10 +1,6 @@
 # Online Editor
 
 <p align="center">
-  <img src="./logo.svg" width="120" alt="Online Editor Logo" />
-</p>
-
-<p align="center">
   浏览器代码编辑器 & 可视化运行组件，支持 Vue/React 等框架的在线编辑与预览
 </p>
 
