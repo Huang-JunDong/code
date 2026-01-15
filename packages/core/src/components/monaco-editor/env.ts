@@ -223,6 +223,12 @@ export function loadMonacoEnv(store: Store) {
   languages.register({ id: 'vue', extensions: ['.vue'] });
   languages.register({ id: 'javascript', extensions: ['.js', '.jsx'] });
   languages.register({ id: 'typescript', extensions: ['.ts', '.tsx'] });
+  languages.register({ id: 'html', extensions: ['.html'] });
+  languages.register({ id: 'css', extensions: ['.css'] });
+  languages.register({ id: 'less', extensions: ['.less'] });
+  languages.register({ id: 'scss', extensions: ['.scss'] });
+  languages.register({ id: 'sass', extensions: ['.sass'] });
+  languages.register({ id: 'json', extensions: ['.json'] });
 
   store.reloadLanguageTools = () => reloadLanguageTools(store);
   languages.onLanguage('vue', () => store.reloadLanguageTools!());

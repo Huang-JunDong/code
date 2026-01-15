@@ -100,25 +100,24 @@ createApp(App).mount('#app');`,
 
 ## ⚙️ 配置项
 
-
-| 属性           | 类型                     | 默认值  | 说明                       |
-| -------------- | ------------------------ | ------- | -------------------------- |
-| `showFileBar`  | `boolean`                | `true`  | 是否展示侧文件栏           |
-| `showCode`     | `boolean`                | `true`  | 是否展示代码编辑区         |
-| `showPreview`  | `boolean`                | `true`  | 是否展示预览区             |
-| `showToolbar`  | `boolean`                | `true`  | 是否展示工具栏             |
-| `entry`        | `string`                 | -       | 入口文件名，默认第一个文件 |
-| `activeFile`   | `string`                 | -       | 初始展示的文件             |
-| `initFiles`    | `Record<string, string>` | -       | 初始化文件 map             |
-| `appType`      | `AppType`                | -       | 应用类型                   |
-| `excludeTools` | `Control[]`              | -       | 工具栏要移除的按钮         |
-| `codeSize`     | `number`                 | -       | 代码字号                   |
-| `vueVersion`   | `2                       | 3`      | `3`                        |
-| `theme`        | `'light'                 | 'dark'` | `'light'`                  |
-| `openConsole`  | `boolean`                | `false` | 是否默认打开控制台         |
-| `showEruda`    | `boolean`                | `false` | 是否展示 Eruda 调试工具    |
-| `document`     | `string`                 | -       | 文档链接地址               |
-| `github`       | `string`                 | -       | GitHub 地址                |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `showFileBar` | `boolean` | `true` | 是否展示侧文件栏 |
+| `showCode` | `boolean` | `true` | 是否展示代码编辑区 |
+| `showPreview` | `boolean` | `true` | 是否展示预览区 |
+| `showToolbar` | `boolean` | `true` | 是否展示工具栏 |
+| `entry` | `string` | - | 入口文件名，默认第一个文件 |
+| `activeFile` | `string` | - | 初始展示的文件 |
+| `initFiles` | `Record<string, string>` | - | 初始化文件 map |
+| `appType` | `AppType` | - | 应用类型 |
+| `excludeTools` | `Control[]` | - | 工具栏要移除的按钮 |
+| `codeSize` | `number` | - | 代码字号 |
+| `vueVersion` | `2 \| 3` | `3` | Vue 编译器版本 |
+| `theme` | `'light' \| 'dark'` | `'light'` | 主题 |
+| `openConsole` | `boolean` | `false` | 是否默认打开控制台 |
+| `showEruda` | `boolean` | `false` | 是否展示 Eruda 调试工具 |
+| `document` | `string` | - | 文档链接地址 |
+| `github` | `string` | - | GitHub 地址 |
 
 ### AppType 类型
 

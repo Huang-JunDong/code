@@ -48,8 +48,6 @@ export const getFileLanguage = (filename: string) => {
     return 'javascript';
   } else if (ext === 'ts' || ext === 'tsx') {
     return 'typescript';
-  } else if (['css', 'less', 'sass', 'scss'].includes(ext)) {
-    return 'css';
   } else {
     return ext;
   }

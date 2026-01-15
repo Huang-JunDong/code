@@ -1,6 +1,26 @@
 {
-  "name": "codeplayer",
-  "version": "0.3.0",
+  "name": "online-editor",
+  "version": "0.1.0",
+  "description": "浏览器代码编辑器 & 可视化运行组件，支持 Vue/React 等框架的在线编辑与预览",
+  "keywords": [
+    "code-editor",
+    "monaco-editor",
+    "vue",
+    "react",
+    "playground",
+    "online-ide",
+    "browser-editor"
+  ],
+  "license": "MIT",
+  "author": "huangjundong",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Huang-JunDong/code"
+  },
+  "homepage": "https://github.com/Huang-JunDong/code#readme",
+  "bugs": {
+    "url": "https://github.com/Huang-JunDong/code/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -16,13 +36,21 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./style.css": {
+      "default": "./dist/style.css"
+    },
     "./dist/style.css": {
       "default": "./dist/style.css"
     }
   },
+  "sideEffects": [
+    "*.css",
+    "*.less"
+  ],
   "files": [
     "dist",
-    "types"
+    "types",
+    "README.md"
   ],
   "scripts": {
     "dev": "vite",

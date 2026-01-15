@@ -22,7 +22,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        assetFileNames: () => `[name]-[hash].[ext]`,
+        assetFileNames: '[name]-[hash].[ext]',
       },
     },
   },

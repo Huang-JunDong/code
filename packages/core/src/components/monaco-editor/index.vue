@@ -124,19 +124,6 @@ onMounted(async () => {
         editorInstance.restoreViewState(file.editorViewState);
         editorInstance.focus();
       }
-
-      monaco.editor.setModelLanguage(model!, 'javascript');
-      if (
-        ['css', 'less', 'sass', 'scss'].includes(
-          getFileExtraName(store.activeFile)
-        )
-      ) {
-        nextTick(() => {
-          if (tempJsModel.value) {
-            monaco.editor.setModelLanguage(tempJsModel.value, 'css');
-          }
-        });
-      }
     },
     { immediate: true }
   );
