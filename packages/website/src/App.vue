@@ -73,6 +73,10 @@ const isOpen = ref(false);
 
 const options = computed<OnlineEditorOptions>(() => ({
   appType: currentAppType.value as AppType,
+  showEruda: true,
+  openConsole: true,
+  document: 'https://github.com/Huang-JunDong/code#readme',
+  github: 'https://github.com/Huang-JunDong/code',
 }));
 
 const toggleMenu = () => {
