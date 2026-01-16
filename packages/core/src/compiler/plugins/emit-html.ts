@@ -139,12 +139,15 @@ async function emitHtml(
 function flattenScopeMappings(importMap: any) {
   const flattenedMappings: Record<string, string> = {};
 
-  for (let key in importMap.imports) {
-    flattenedMappings[key] = importMap.imports[key];
+  const imports = importMap?.imports ?? {};
+  const scopes = importMap?.scopes ?? {};
+
+  for (let key in imports) {
+    flattenedMappings[key] = imports[key];
   }
 
-  for (const scopePrefix in importMap.scopes) {
-    const scopeMappings = importMap.scopes[scopePrefix];
+  for (const scopePrefix in scopes) {
+    const scopeMappings = scopes[scopePrefix];
     for (const scopeModulePath in scopeMappings) {
       const fullPath = `${scopePrefix}${scopeModulePath}`;
       flattenedMappings[fullPath] = scopeMappings[scopeModulePath];

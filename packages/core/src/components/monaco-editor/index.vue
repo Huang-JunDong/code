@@ -19,7 +19,7 @@ import {
   computed,
 } from 'vue';
 import * as monaco from 'monaco-editor';
-import { initMonaco } from './env';
+import { disposeLanguageTools, initMonaco, loadWasm } from './env';
 import { getOrCreateModel } from './utils';
 import { loadGrammars } from 'monaco-volar';
 import { darkPlus, lightPlus } from './themes';
@@ -51,53 +51,60 @@ const lang = computed(() =>
     : 'javascript'
 );
 
+const projectMode = computed<'vue' | 'jsx' | 'none'>(() => {
+  const filenames = Object.keys(store.files || {});
+  if (filenames.some((name) => name.endsWith('.vue'))) return 'vue';
+  if (filenames.some((name) => name.endsWith('.tsx') || name.endsWith('.jsx'))) return 'jsx';
+  return 'none';
+});
+
 onMounted(async () => {
   // 创建临时 model 以激活语言服务
   // JavaScript
   tempJsModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.js`),
+    monaco.Uri.parse(`inmemory://model/temp.js`),
     'javascript',
     'let temp = 1'
   );
   
   // TypeScript
   tempTsModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.ts`),
+    monaco.Uri.parse(`inmemory://model/temp.ts`),
     'typescript',
     'let temp: number = 1'
   );
   
   // JSX
   tempJsxModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.jsx`),
+    monaco.Uri.parse(`inmemory://model/temp.jsx`),
     'javascript',
     'const App = () => <div />'
   );
   
   // TSX
   tempTsxModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.tsx`),
+    monaco.Uri.parse(`inmemory://model/temp.tsx`),
     'typescript',
     'const App: React.FC = () => <div />'
   );
   
   // 创建临时 CSS model 以激活 CSS 语言服务
   tempCssModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.css`),
+    monaco.Uri.parse(`inmemory://model/temp.css`),
     'css',
     'body { color: red; }'
   );
   
   // 创建临时 HTML model 以激活 HTML 语言服务
   tempHtmlModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.html`),
+    monaco.Uri.parse(`inmemory://model/temp.html`),
     'html',
     '<!DOCTYPE html><html></html>'
   );
   
   // 创建临时 JSON model 以激活 JSON 语言服务
   tempJsonModel.value = getOrCreateModel(
-    monaco.Uri.parse(`file:///temp.json`),
+    monaco.Uri.parse(`inmemory://model/temp.json`),
     'json',
     '{}'
   );
@@ -185,6 +192,7 @@ onMounted(async () => {
     { immediate: true }
   );
 
+  await loadWasm();
   await loadGrammars(monaco as any, editorInstance as any);
 
   editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
@@ -195,8 +203,22 @@ onMounted(async () => {
     store.files[store.activeFile].code = editorInstance.getValue();
   });
 
-  // 加载 Volar 语言工具，为 Vue/JS/TS 提供智能提示服务
-  store.reloadLanguageTools();
+  let lastMode: 'vue' | 'jsx' | 'none' | null = null;
+  watch(
+    projectMode,
+    (mode) => {
+      if (mode === lastMode) return;
+      lastMode = mode;
+      if (mode === 'vue') {
+        store.reloadLanguageTools(true);
+      } else if (mode === 'jsx') {
+        store.reloadLanguageTools(false);
+      } else {
+        disposeLanguageTools();
+      }
+    },
+    { immediate: true }
+  );
 
   watch(
     () => store.codeSize,

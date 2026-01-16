@@ -33,7 +33,7 @@ function toggle() {
 
 <template>
   <div
-    v-if="!store.excludeTools.includes('console')"
+    v-if="store.showEruda && !store.excludeTools.includes('console')"
     ref="reference"
     @click="toggle"
     class="toolbar-icon"

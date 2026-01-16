@@ -18,39 +18,45 @@ const loaded = ref(false);
 const CodeSlotName = computed(() => (store.reverse ? 'right' : 'left'));
 const PreviewSlotName = computed(() => (store.reverse ? 'left' : 'right'));
 
-const onLoadCallback = () => {
+const handleReady = () => {
   loaded.value = true;
+  window.removeEventListener('load', handleReady);
+  document.removeEventListener('DOMContentLoaded', handleReady);
 };
 
 // 处理页面加载状态
 if (document.readyState === 'complete') {
-  onLoadCallback();
+  handleReady();
 } else {
-  // 同时监听 DOMContentLoaded 和 load 事件
-  const handleReady = () => {
-    onLoadCallback();
-    window.removeEventListener('load', handleReady);
-    document.removeEventListener('DOMContentLoaded', handleReady);
-  };
   window.addEventListener('load', handleReady);
   document.addEventListener('DOMContentLoaded', handleReady);
 }
 
 onUnmounted(() => {
-  window.removeEventListener('load', onLoadCallback);
-  document.removeEventListener('DOMContentLoaded', onLoadCallback);
+  window.removeEventListener('load', handleReady);
+  document.removeEventListener('DOMContentLoaded', handleReady);
 });
 
 const init = () => {
   const params = new URLSearchParams(location.search);
-  const options = props.options || {};
-  for (let key in props.options) {
+  const options = props.options ?? {};
+  for (const key in options) {
     if (key in store && options[key as keyof typeof options] !== undefined) {
       if (params.get(key) === null) {
         const value = options[key as keyof typeof options];
         (store as Record<string, unknown>)[key] = value;
       }
     }
+  }
+
+  if (store.showCode === false && store.showPreview === false) {
+    store.showCode = true;
+  }
+  if (store.openConsole === true && store.showEruda === false) {
+    store.showEruda = true;
+  }
+  if (store.showFileBar === false) {
+    store.showMobileFileBar = false;
   }
 
   initFileSystem();
@@ -60,18 +66,24 @@ const init = () => {
 function initFileSystem() {
   // 依次根据 options.initFiles、serializedState、appType 初始化文件
   const params = new URLSearchParams(location.search);
-  const options = props.options || {};
+  const options = props.options ?? {};
   const appType = params.get('appType') || options.appType || '';
-  if (appType === 'vue2') {
+  if (
+    appType === 'vue2' &&
+    params.get('vueVersion') === null &&
+    options.vueVersion === undefined
+  ) {
     store.vueVersion = 2;
   }
   let filesMap = getTemplate(appType) as Record<string, string>;
-  if (options.initFiles) {
+  if (options.initFiles && Object.keys(options.initFiles).length > 0) {
     filesMap = options.initFiles;
   } else if (location.hash) {
     try {
       const files = JSON.parse(atou(location.hash.slice(1)));
-      filesMap = files;
+      if (files && typeof files === 'object') {
+        filesMap = files as Record<string, string>;
+      }
     } catch (e) {
       console.error('Failed to parse files from hash:', e);
     }
@@ -79,8 +91,16 @@ function initFileSystem() {
 
   // 将键值对转换为虚拟文件
   const files: Record<string, File> = {};
-  for (const filename in filesMap) {
-    files[filename] = new File(filename, filesMap[filename]);
+  for (const filename in filesMap || {}) {
+    const code = (filesMap as Record<string, unknown>)[filename];
+    if (typeof code !== 'string') continue;
+    files[filename] = new File(filename, code);
+  }
+  if (Object.keys(files).length === 0) {
+    const fallback = getTemplate(appType);
+    for (const filename in fallback) {
+      files[filename] = new File(filename, fallback[filename]);
+    }
   }
   store.files = files;
 
@@ -91,6 +111,9 @@ function initFileSystem() {
   }
   store.activeFile =
     params.get('activeFile') || options.activeFile || store.entry;
+  if (!files[store.activeFile]) {
+    store.activeFile = store.entry;
+  }
 }
 
 watch(
@@ -103,16 +126,50 @@ watch(
     immediate: true,
   }
 );
+
+watch(
+  () => [store.isMobile, store.showCode, store.showPreview],
+  () => {
+    if (!store.isMobile) return;
+    if (store.showCode === false && store.mobileView === 'code') {
+      store.mobileView = 'preview';
+    }
+    if (store.showPreview === false && store.mobileView === 'preview') {
+      store.mobileView = 'code';
+    }
+    if (store.showCode === false && store.showPreview === true) {
+      store.mobileView = 'preview';
+    } else if (store.showPreview === false && store.showCode === true) {
+      store.mobileView = 'code';
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => [store.isMobile, store.showFileBar],
+  () => {
+    if (!store.isMobile) return;
+    if (store.showFileBar === false) {
+      store.showMobileFileBar = false;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-  <div class="codeplayer-container" :class="{ 'is-mobile': store.isMobile }">
-    <Toolbar />
+  <div
+    class="codeplayer-container"
+    :class="{ 'is-mobile': store.isMobile, 'no-toolbar': !store.showToolbar }"
+  >
+    <Toolbar v-if="store.showToolbar" />
     <!-- 移动端布局 -->
     <template v-if="store.isMobile">
       <!-- 移动端选项卡 -->
       <div class="mobile-tabs">
         <button 
+          v-if="store.showCode"
           class="mobile-tab" 
           :class="{ active: store.mobileView === 'code' }"
           @click="store.mobileView = 'code'"
@@ -123,6 +180,7 @@ watch(
           <span>代码</span>
         </button>
         <button 
+          v-if="store.showPreview"
           class="mobile-tab" 
           :class="{ active: store.mobileView === 'preview' }"
           @click="store.mobileView = 'preview'"
@@ -135,6 +193,7 @@ watch(
       </div>
       <!-- 移动端文件栏抽屉 -->
       <div 
+        v-if="store.showFileBar"
         class="mobile-file-drawer" 
         :class="{ open: store.showMobileFileBar }"
       >
@@ -145,10 +204,18 @@ watch(
       </div>
       <!-- 移动端内容区 -->
       <div class="mobile-content">
-        <div class="mobile-panel" :class="{ active: store.mobileView === 'code' }">
+        <div
+          v-if="store.showCode"
+          class="mobile-panel"
+          :class="{ active: store.mobileView === 'code' }"
+        >
           <CodeEditor />
         </div>
-        <div class="mobile-panel" :class="{ active: store.mobileView === 'preview' }">
+        <div
+          v-if="store.showPreview"
+          class="mobile-panel"
+          :class="{ active: store.mobileView === 'preview' }"
+        >
           <Preview />
           <Loading v-if="!loaded" />
         </div>

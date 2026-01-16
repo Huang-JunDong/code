@@ -11,7 +11,9 @@ export function getOrCreateModel(
     if (lang && model.getLanguageId() !== lang) {
       editor.setModelLanguage(model, lang);
     }
-    model.setValue(value);
+    if (model.getValue() !== value) {
+      model.setValue(value);
+    }
     return model;
   }
   return editor.createModel(value, lang, uri);

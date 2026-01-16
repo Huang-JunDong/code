@@ -21,13 +21,21 @@ const loadSolidPreset = createRemoteLoader<any>(
 );
 
 let presetRegistered = false;
+let presetRegistering: Promise<void> | null = null;
 
 async function ensureSolidPreset(): Promise<void> {
   if (presetRegistered) return;
+  if (presetRegistering) return presetRegistering;
 
-  const solidPreset = await loadSolidPreset();
-  Babel.registerPreset('solid', solidPreset);
-  presetRegistered = true;
+  presetRegistering = (async () => {
+    const solidPreset = await loadSolidPreset();
+    Babel.registerPreset('solid', solidPreset);
+    presetRegistered = true;
+  })().finally(() => {
+    presetRegistering = null;
+  });
+
+  return presetRegistering;
 }
 
 export async function transformSolid(

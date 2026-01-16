@@ -37,7 +37,7 @@ const toggleMobileFileBar = () => {
     <div class="toolbar-left">
       <!-- 移动端显示文件栏切换按钮 -->
       <button 
-        v-if="store.isMobile" 
+        v-if="store.isMobile && store.showFileBar" 
         class="mobile-menu-btn"
         @click="toggleMobileFileBar"
         title="文件列表"

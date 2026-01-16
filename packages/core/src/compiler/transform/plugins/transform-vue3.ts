@@ -45,9 +45,9 @@ export const transformVue3 = async (
           (descriptor.scriptSetup && descriptor.scriptSetup.lang);
         const isTS = scriptLang === 'ts';
 
-        if (scriptLang && !isTS) {
+        if (scriptLang && scriptLang !== 'ts' && scriptLang !== 'js') {
           _errors.push(
-            new Error(`Only lang="ts" is supported for <script> blocks.`)
+            new Error(`Only lang="ts" or lang="js" is supported for <script> blocks.`)
           );
           return;
         }
@@ -109,7 +109,7 @@ export const transformVue3 = async (
         if (css) {
           compiled.css = css.trim();
         } else {
-          compiled.css = '/* No <style> tags present */';
+          compiled.css = '';
         }
       })
   );
@@ -175,7 +175,8 @@ async function doCompileStyle(
         return ['', allErrors];
       }
       // proceed even if css compile errors
-    } else {
+    }
+    if (styleResult.code) {
       css += styleResult.code + '\n';
     }
   }
@@ -222,15 +223,7 @@ async function doCompileScript(
           },
         },
       });
-      let code = '';
-      if (compiledScript.bindings) {
-        code += `\n/* Analyzed bindings: ${JSON.stringify(
-          compiledScript.bindings,
-          null,
-          2
-        )} */`;
-      }
-      code +=
+      let code =
         `\n` +
         rewriteDefault(
           compiledScript.content,

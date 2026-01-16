@@ -17,6 +17,7 @@ export interface Store {
   entry: string;
   activeFile: string;
   files: Record<string, File>;
+  showToolbar: boolean;
   showFileBar: boolean;
   showCode: boolean;
   showPreview: boolean;
@@ -30,7 +31,7 @@ export interface Store {
   vueVersion: 2 | 3;
   typescriptVersion: string;
   theme: Theme;
-  reloadLanguageTools: () => void;
+  reloadLanguageTools: (withMarkers?: boolean) => void;
   document: string;
   github: string;
   // 移动端相关
@@ -41,19 +42,45 @@ export interface Store {
 
 const params = new URLSearchParams(location.search);
 
+function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function safeParseJson<T>(value: string | null, fallback: T): T {
+  if (!value) return fallback;
+  for (let i = 0; i < 3; i++) {
+    const decoded = safeDecodeURIComponent(value);
+    try {
+      return JSON.parse(decoded) as T;
+    } catch {}
+    try {
+      return JSON.parse(value) as T;
+    } catch {}
+    if (decoded === value) {
+      break;
+    }
+    value = decoded;
+  }
+  return fallback;
+}
+
 export const store = reactive<Store>({
   // 文件系统相关
-  entry: decodeURIComponent(params.get('entry') || 'index.html'),
+  entry: safeDecodeURIComponent(params.get('entry') || 'index.html'),
   files: {},
-  activeFile: decodeURIComponent(params.get('activeFile') || ''),
+  activeFile: safeDecodeURIComponent(params.get('activeFile') || ''),
+  showToolbar: params.get('showToolbar') !== 'false',
   showFileBar: params.get('showFileBar') !== 'false',
   showCode: params.get('showCode') !== 'false',
   showPreview: params.get('showPreview') !== 'false',
-  showEruda: params.get('showEruda') !== 'false',
+  showEruda: params.get('showEruda') === 'true',
   openConsole: params.get('openConsole') === 'true',
   reverse: params.get('reverse') === 'true',
-  excludeTools:
-    JSON.parse(decodeURIComponent(params.get('excludeTools') || '[]')) || [],
+  excludeTools: safeParseJson<Control[]>(params.get('excludeTools'), []),
   editor: null,
   rerenderID: 0,
   codeSize: Number(params.get('codeSize') || 14),
@@ -64,12 +91,8 @@ export const store = reactive<Store>({
     (localStorage.getItem(LocalThemeKey) as Theme) ||
     'light',
   reloadLanguageTools: () => {},
-  document: decodeURIComponent(
-    params.get('document') || 'https://github.com'
-  ),
-  github: decodeURIComponent(
-    params.get('github') || 'https://github.com'
-  ),
+  document: safeDecodeURIComponent(params.get('document') || 'https://github.com'),
+  github: safeDecodeURIComponent(params.get('github') || 'https://github.com'),
   // 移动端相关
   isMobile: checkIsMobile(),
   mobileView: 'code',
@@ -120,7 +143,7 @@ function syncStoreToUrl(keys: string[]) {
         if (val !== undefined) {
           const url = new URL(location.href);
           if (typeof val === 'object') {
-            url.searchParams.set(key, encodeURIComponent(JSON.stringify(val)));
+            url.searchParams.set(key, JSON.stringify(val));
           } else {
             url.searchParams.set(key, String(val));
           }
@@ -135,6 +158,7 @@ function syncStoreToUrl(keys: string[]) {
 syncStoreToUrl([
   'entry',
   'activeFile',
+  'showToolbar',
   'showFileBar',
   'showCode',
   'showPreview',

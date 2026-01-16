@@ -14,7 +14,7 @@
 
 ## ✨ 特性
 
-- 🎨 **多框架支持** - 支持 Vue 2/3、React、HTML、JavaScript、TypeScript
+- 🎨 **多框架支持** - 支持 Vue 2/3、React、Svelte、Solid、HTML、JavaScript、TypeScript
 - 🚀 **Monaco Editor** - 基于 VS Code 同款编辑器，提供专业的代码编辑体验
 - 📱 **响应式布局** - 同时支持桌面端和移动端
 - 🎯 **即时预览** - 实时编译运行，所见即所得
@@ -119,7 +119,7 @@ createApp(App).mount('#app');`,
 ### AppType 类型
 
 ```typescript
-type AppType = 'vue' | 'vue2' | 'vue3' | 'react' | 'html' | 'javascript' | 'js' | 'typescript' | 'ts';
+type AppType = 'vue' | 'vue2' | 'vue3' | 'react' | 'svelte' | 'solid' | 'html' | 'javascript' | 'js' | 'typescript' | 'ts';
 ```
 
 ### Control 类型
