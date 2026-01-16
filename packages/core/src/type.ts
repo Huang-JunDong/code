@@ -18,7 +18,7 @@ export type AppType =
   | 'typescript'
   | 'ts';
 
-export interface CodePlayerOptions {
+export interface OnlineEditorOptions {
   /**
    * @description_en Whether to display the side file column, default value is true
    * @description_zh 是否展示侧文件栏，默认为 true

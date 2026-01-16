@@ -3,7 +3,7 @@ import { watch, computed, ref, onUnmounted } from 'vue';
 import { store } from '@/store';
 import { atou } from '@/utils';
 import { getTemplate, File } from '@/compiler';
-import { CodePlayerOptions } from '@/type';
+import { OnlineEditorOptions } from '@/type';
 import Toolbar from './toolbar/index.vue';
 import Splitter from './splitter/index.vue';
 import FileBar from './file-bar/index.vue';
@@ -11,7 +11,7 @@ import CodeEditor from './monaco-editor/index.vue';
 import Preview from './preview/index.vue';
 import Loading from './loading/index.vue';
 
-const props = defineProps<{ options?: CodePlayerOptions }>();
+const props = defineProps<{ options?: OnlineEditorOptions }>();
 
 const loaded = ref(false);
 

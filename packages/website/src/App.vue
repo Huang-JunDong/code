@@ -24,11 +24,11 @@
       </ul>
     </Transition>
   </div>
-  <CodePlayer :options="options" class="codeplayer-container"></CodePlayer>
+  <OnlineEditor :options="options" class="codeplayer-container"></OnlineEditor>
 </template>
 
 <script setup lang="ts">
-import CodePlayer, { CodePlayerOptions, AppType } from 'online-editor';
+import OnlineEditor, { OnlineEditorOptions, AppType } from 'online-editor';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const MOBILE_BREAKPOINT = 768;
@@ -69,7 +69,7 @@ if (typeFromUrl && appTypes.includes(typeFromUrl)) {
 const currentAppType = ref(initialType);
 const isOpen = ref(false);
 
-const options = computed<CodePlayerOptions>(() => ({
+const options = computed<OnlineEditorOptions>(() => ({
   appType: currentAppType.value as AppType,
 }));
 

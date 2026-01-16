@@ -26,4 +26,4 @@ export const extensions = ['.js', '.ts', '.json', '.jsx', '.tsx', '.vue'];
 export * from './tooltip';
 
 export const CodeSizes = [12, 13, 14, 15, 16, 17, 18];
-export const LocalThemeKey = 'codeplayer_local_theme_key';
+export const LocalThemeKey = 'onlineeditor_local_theme_key';

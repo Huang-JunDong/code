@@ -40,12 +40,12 @@ pnpm add online-editor
 
 ```vue
 <script setup>
-import CodePlayer from 'online-editor';
+import OnlineEditor from 'online-editor';
 import 'online-editor/style.css';
 </script>
 
 <template>
-  <CodePlayer />
+  <OnlineEditor />
 </template>
 ```
 
@@ -53,7 +53,7 @@ import 'online-editor/style.css';
 
 ```vue
 <script setup>
-import CodePlayer from 'online-editor';
+import OnlineEditor from 'online-editor';
 import 'online-editor/style.css';
 
 const options = {
@@ -65,7 +65,7 @@ const options = {
 </script>
 
 <template>
-  <CodePlayer :options="options" />
+  <OnlineEditor :options="options" />
 </template>
 ```
 
@@ -73,7 +73,7 @@ const options = {
 
 ```vue
 <script setup>
-import CodePlayer from 'online-editor';
+import OnlineEditor from 'online-editor';
 import 'online-editor/style.css';
 
 const options = {
@@ -90,7 +90,7 @@ createApp(App).mount('#app');`,
 </script>
 
 <template>
-  <CodePlayer :options="options" />
+  <OnlineEditor :options="options" />
 </template>
 ```
 

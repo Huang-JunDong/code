@@ -1,8 +1,8 @@
-import CodePlayer from './components/index.vue';
+import OnlineEditor from './components/index.vue';
 import '@/style/global.less';
 import '@/style/index.less';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
-export type { CodePlayerOptions, AppType, Control } from './type';
+export type { OnlineEditorOptions, AppType, Control } from './type';
 
-export default CodePlayer;
+export default OnlineEditor;
