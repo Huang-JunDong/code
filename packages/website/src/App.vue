@@ -35,6 +35,27 @@ const MOBILE_BREAKPOINT = 768;
 
 const appTypes = ['vue3', 'react', 'vue2', 'solid', 'svelte', 'ts', 'js'];
 const storageKey = 'appType';
+const THEME_STORAGE_KEY = 'onlineeditor_local_theme_key';
+
+type Theme = 'light' | 'dark';
+
+const resolveInitialTheme = (): Theme => {
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = params.get('theme');
+  if (fromUrl === 'light' || fromUrl === 'dark') {
+    return fromUrl;
+  }
+
+  const fromStorage = localStorage.getItem(THEME_STORAGE_KEY);
+  if (fromStorage === 'light' || fromStorage === 'dark') {
+    return fromStorage;
+  }
+
+  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches;
+  return prefersDark ? 'dark' : 'light';
+};
+
+const initialTheme = resolveInitialTheme();
 
 const isMobile = ref(window.innerWidth < MOBILE_BREAKPOINT);
 
@@ -73,6 +94,7 @@ const isOpen = ref(false);
 
 const options = computed<OnlineEditorOptions>(() => ({
   appType: currentAppType.value as AppType,
+  theme: initialTheme,
   showEruda: true,
   openConsole: true,
   document: 'https://github.com/Huang-JunDong/code#readme',
@@ -123,9 +145,20 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="less">
-@brand-color: #0969da;
 @mobile-breakpoint: 768px;
 @toolbar-height: 36px;
+
+:global(body.codeplayer-theme-light) .app-type-switcher {
+  --website-switcher-hover-bgc: rgba(0, 0, 0, 0.05);
+  --website-switcher-list-hover-bgc: rgba(0, 0, 0, 0.06);
+  --website-switcher-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+:global(body.codeplayer-theme-dark) .app-type-switcher {
+  --website-switcher-hover-bgc: rgba(255, 255, 255, 0.08);
+  --website-switcher-list-hover-bgc: rgba(255, 255, 255, 0.06);
+  --website-switcher-shadow: 0 8px 24px rgba(0, 0, 0, 0.56);
+}
 
 .app-type-switcher {
   position: absolute;
@@ -151,16 +184,16 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 13px;
-  color: var(--codeplayer-secondary-color, #666);
+  color: var(--codeplayer-text-secondary, #666);
 
   &:hover {
-    background-color: var(--codeplayer-hover-bgc, rgba(0, 0, 0, 0.05));
+    background-color: var(--website-switcher-hover-bgc, rgba(0, 0, 0, 0.05));
     color: var(--codeplayer-main-color, #333);
   }
 
   &.active {
-    background-color: var(--codeplayer-hover-bgc, rgba(0, 0, 0, 0.05));
-    color: @brand-color;
+    background-color: var(--website-switcher-hover-bgc, rgba(0, 0, 0, 0.05));
+    color: var(--codeplayer-brand, #0969da);
   }
 
   .label {
@@ -171,7 +204,7 @@ onUnmounted(() => {
 
   .value {
     font-weight: 600;
-    color: @brand-color;
+    color: var(--codeplayer-brand, #0969da);
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
@@ -192,10 +225,10 @@ onUnmounted(() => {
   top: calc(@toolbar-height + 4px);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--codeplayer-bg-color, #ffffff);
+  background: var(--codeplayer-float-bgc, #ffffff);
   border: 1px solid var(--codeplayer-border-color, #e1e4e8);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--website-switcher-shadow, 0 8px 24px rgba(0, 0, 0, 0.12));
   padding: 4px;
   list-style: none;
   min-width: 140px;
@@ -225,16 +258,16 @@ onUnmounted(() => {
     }
 
     .check-icon {
-      color: @brand-color;
+      color: var(--codeplayer-brand, #0969da);
     }
 
     &:hover {
-      background-color: var(--codeplayer-hover-bgc, #f6f8fa);
+      background-color: var(--website-switcher-list-hover-bgc, #f6f8fa);
     }
 
     &.selected {
-      background-color: fade(@brand-color, 10%);
-      color: @brand-color;
+      background-color: var(--website-switcher-hover-bgc, rgba(0, 0, 0, 0.05));
+      color: var(--codeplayer-brand, #0969da);
     }
   }
 }
