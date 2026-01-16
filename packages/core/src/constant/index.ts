@@ -21,8 +21,9 @@ export const fileTypes = [
   '.less',
   '.scss',
   '.sass',
+  '.svelte', // Svelte 组件文件
 ];
-export const extensions = ['.js', '.ts', '.json', '.jsx', '.tsx', '.vue'];
+export const extensions = ['.js', '.ts', '.json', '.jsx', '.tsx', '.vue', '.svelte'];
 export * from './tooltip';
 
 export const CodeSizes = [12, 13, 14, 15, 16, 17, 18];

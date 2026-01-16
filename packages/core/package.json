@@ -7,6 +7,8 @@
     "monaco-editor",
     "vue",
     "react",
+    "svelte",
+    "solid",
     "playground",
     "online-ide",
     "browser-editor"

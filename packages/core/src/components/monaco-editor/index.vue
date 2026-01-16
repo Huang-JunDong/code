@@ -32,6 +32,12 @@ const containerRef = ref<HTMLDivElement>();
 const ready = ref(false);
 const editor = shallowRef<monaco.editor.IStandaloneCodeEditor>();
 const tempJsModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempTsModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempJsxModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempTsxModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempCssModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempHtmlModel = shallowRef<monaco.editor.ITextModel | null>(null);
+const tempJsonModel = shallowRef<monaco.editor.ITextModel | null>(null);
 
 initMonaco(store);
 
@@ -46,11 +52,54 @@ const lang = computed(() =>
 );
 
 onMounted(async () => {
-  // 创建临时 model
+  // 创建临时 model 以激活语言服务
+  // JavaScript
   tempJsModel.value = getOrCreateModel(
     monaco.Uri.parse(`file:///temp.js`),
     'javascript',
     'let temp = 1'
+  );
+  
+  // TypeScript
+  tempTsModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.ts`),
+    'typescript',
+    'let temp: number = 1'
+  );
+  
+  // JSX
+  tempJsxModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.jsx`),
+    'javascript',
+    'const App = () => <div />'
+  );
+  
+  // TSX
+  tempTsxModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.tsx`),
+    'typescript',
+    'const App: React.FC = () => <div />'
+  );
+  
+  // 创建临时 CSS model 以激活 CSS 语言服务
+  tempCssModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.css`),
+    'css',
+    'body { color: red; }'
+  );
+  
+  // 创建临时 HTML model 以激活 HTML 语言服务
+  tempHtmlModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.html`),
+    'html',
+    '<!DOCTYPE html><html></html>'
+  );
+  
+  // 创建临时 JSON model 以激活 JSON 语言服务
+  tempJsonModel.value = getOrCreateModel(
+    monaco.Uri.parse(`file:///temp.json`),
+    'json',
+    '{}'
   );
 
   monaco.editor.defineTheme('vs-code-dark-plus', darkPlus);
@@ -76,6 +125,14 @@ onMounted(async () => {
     inlineSuggest: {
       enabled: false,
     },
+    // 启用快速建议（智能提示）
+    quickSuggestions: {
+      other: true,
+      comments: false,
+      strings: true,
+    },
+    suggestOnTriggerCharacters: true,
+    wordBasedSuggestions: true,
     'semanticHighlighting.enabled': true,
     fixedOverflowWidgets: true,
     // 移动端滚动条优化
@@ -138,6 +195,7 @@ onMounted(async () => {
     store.files[store.activeFile].code = editorInstance.getValue();
   });
 
+  // 加载 Volar 语言工具，为 Vue/JS/TS 提供智能提示服务
   store.reloadLanguageTools();
 
   watch(
@@ -168,6 +226,18 @@ onBeforeUnmount(() => {
   // 清理临时 model
   tempJsModel.value?.dispose();
   tempJsModel.value = null;
+  tempTsModel.value?.dispose();
+  tempTsModel.value = null;
+  tempJsxModel.value?.dispose();
+  tempJsxModel.value = null;
+  tempTsxModel.value?.dispose();
+  tempTsxModel.value = null;
+  tempCssModel.value?.dispose();
+  tempCssModel.value = null;
+  tempHtmlModel.value?.dispose();
+  tempHtmlModel.value = null;
+  tempJsonModel.value?.dispose();
+  tempJsonModel.value = null;
 });
 </script>
 

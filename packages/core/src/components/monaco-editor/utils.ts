@@ -7,6 +7,10 @@ export function getOrCreateModel(
 ) {
   const model = editor.getModel(uri);
   if (model) {
+    // 确保语言正确设置
+    if (lang && model.getLanguageId() !== lang) {
+      editor.setModelLanguage(model, lang);
+    }
     model.setValue(value);
     return model;
   }

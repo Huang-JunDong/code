@@ -1,11 +1,19 @@
 import { jsDelivrUriBase } from '@volar/cdn';
 import * as volar from '@volar/monaco';
 import { editor, languages, Uri } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
+// 直接导入语言模式设置函数，绕过 onLanguage 回调机制
+// Monaco 的 onLanguage 回调在打包后可能不会被正确触发
+import { setupMode as setupCssMode } from 'monaco-editor/esm/vs/language/css/cssMode';
+import { setupMode as setupHtmlMode } from 'monaco-editor/esm/vs/language/html/htmlMode';
+import { setupMode as setupJsonMode } from 'monaco-editor/esm/vs/language/json/jsonMode';
+// @ts-ignore - 模块存在但没有类型声明
+import { setupTypeScript, setupJavaScript } from 'monaco-editor/esm/vs/language/typescript/tsMode';
 import * as onigasm from 'onigasm';
 import onigasmWasm from 'onigasm/lib/onigasm.wasm?url';
 import { watchEffect } from 'vue';
@@ -229,7 +237,185 @@ export function loadMonacoEnv(store: Store) {
   languages.register({ id: 'scss', extensions: ['.scss'] });
   languages.register({ id: 'sass', extensions: ['.sass'] });
   languages.register({ id: 'json', extensions: ['.json'] });
+  
+  // Svelte 文件直接使用 HTML 语言服务（在 getFileLanguage 中映射为 'html'）
+  // 这样可以获得完整的 HTML 语法高亮和智能提示
+
+  // 启用 CSS/LESS/SCSS 智能提示
+  monaco.languages.css.cssDefaults.setOptions({
+    validate: true,
+    lint: {
+      compatibleVendorPrefixes: 'ignore',
+      vendorPrefix: 'warning',
+      duplicateProperties: 'warning',
+      emptyRules: 'warning',
+      importStatement: 'ignore',
+      boxModel: 'ignore',
+      universalSelector: 'ignore',
+      zeroUnits: 'ignore',
+      fontFaceProperties: 'warning',
+      hexColorLength: 'error',
+      argumentsInColorFunction: 'error',
+      unknownProperties: 'warning',
+      ieHack: 'ignore',
+      unknownVendorSpecificProperties: 'ignore',
+      propertyIgnoredDueToDisplay: 'warning',
+    },
+  });
+
+  monaco.languages.css.lessDefaults.setOptions({
+    validate: true,
+  });
+
+  monaco.languages.css.scssDefaults.setOptions({
+    validate: true,
+  });
 
   store.reloadLanguageTools = () => reloadLanguageTools(store);
   languages.onLanguage('vue', () => store.reloadLanguageTools!());
+  
+  // 手动设置语言模式，确保智能提示工作
+  // Monaco 的 onLanguage 回调在打包后可能不会被正确触发
+  // 这会影响所有非 Vue 项目的独立 CSS/HTML/JSON 文件（Solid、React、Svelte 等）
+  
+  // CSS/LESS/SCSS 语言模式
+  setupCssMode(monaco.languages.css.cssDefaults);
+  setupCssMode(monaco.languages.css.lessDefaults);
+  setupCssMode(monaco.languages.css.scssDefaults);
+  
+  // HTML 语言模式（包括 Handlebars 和 Razor）
+  setupHtmlMode(monaco.languages.html.htmlDefaults);
+  
+  // JSON 语言模式
+  setupJsonMode(monaco.languages.json.jsonDefaults);
+  
+  // TypeScript/JavaScript 语言模式
+  // 手动激活，确保在 js/jsx/ts/tsx 文件中智能提示正常工作
+  setupTypeScript(monaco.languages.typescript.typescriptDefaults);
+  setupJavaScript(monaco.languages.typescript.javascriptDefaults);
+  
+  // 通过 setModeConfiguration 确保 completionItems 被启用
+  monaco.languages.css.cssDefaults.setModeConfiguration({
+    completionItems: true,
+    hovers: true,
+    documentSymbols: true,
+    definitions: true,
+    references: true,
+    documentHighlights: true,
+    rename: true,
+    colors: true,
+    foldingRanges: true,
+    diagnostics: true,
+    selectionRanges: true,
+    documentFormattingEdits: true,
+    documentRangeFormattingEdits: true,
+  });
+  
+  monaco.languages.css.lessDefaults.setModeConfiguration({
+    completionItems: true,
+    hovers: true,
+    documentSymbols: true,
+    definitions: true,
+    references: true,
+    documentHighlights: true,
+    rename: true,
+    colors: true,
+    foldingRanges: true,
+    diagnostics: true,
+    selectionRanges: true,
+    documentFormattingEdits: true,
+    documentRangeFormattingEdits: true,
+  });
+  
+  monaco.languages.css.scssDefaults.setModeConfiguration({
+    completionItems: true,
+    hovers: true,
+    documentSymbols: true,
+    definitions: true,
+    references: true,
+    documentHighlights: true,
+    rename: true,
+    colors: true,
+    foldingRanges: true,
+    diagnostics: true,
+    selectionRanges: true,
+    documentFormattingEdits: true,
+    documentRangeFormattingEdits: true,
+  });
+  
+  // HTML 模式配置
+  monaco.languages.html.htmlDefaults.setModeConfiguration({
+    completionItems: true,
+    hovers: true,
+    documentSymbols: true,
+    links: true,
+    documentHighlights: true,
+    rename: true,
+    colors: true,
+    foldingRanges: true,
+    selectionRanges: true,
+    diagnostics: true,
+    documentFormattingEdits: true,
+    documentRangeFormattingEdits: true,
+  });
+  
+  // JSON 模式配置
+  monaco.languages.json.jsonDefaults.setModeConfiguration({
+    completionItems: true,
+    hovers: true,
+    documentSymbols: true,
+    tokens: true,
+    colors: true,
+    foldingRanges: true,
+    diagnostics: true,
+    selectionRanges: true,
+    documentFormattingEdits: true,
+    documentRangeFormattingEdits: true,
+  });
+  
+  // TypeScript/JavaScript 语言配置
+  // 为 js/jsx/ts/tsx 文件启用完整的语言支持
+  monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+  monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+  
+  // TypeScript 编译器选项
+  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+    target: monaco.languages.typescript.ScriptTarget.ESNext,
+    module: monaco.languages.typescript.ModuleKind.ESNext,
+    moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+    allowNonTsExtensions: true,
+    allowJs: true,
+    checkJs: true,
+    jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+    esModuleInterop: true,
+    strict: true,
+    noEmit: true,
+    isolatedModules: true,
+  });
+  
+  // JavaScript 编译器选项
+  monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+    target: monaco.languages.typescript.ScriptTarget.ESNext,
+    module: monaco.languages.typescript.ModuleKind.ESNext,
+    moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+    allowNonTsExtensions: true,
+    allowJs: true,
+    checkJs: true,
+    jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
+    esModuleInterop: true,
+    noEmit: true,
+  });
+  
+  // 启用诊断（错误提示）
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: false,
+    noSyntaxValidation: false,
+    noSuggestionDiagnostics: false,
+  });
+  
+  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: false,
+    noSyntaxValidation: false,
+    noSuggestionDiagnostics: false,
+  });
 }

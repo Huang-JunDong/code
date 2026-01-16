@@ -33,7 +33,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const MOBILE_BREAKPOINT = 768;
 
-const appTypes = ['vue3', 'react', 'vue2', 'ts', 'js'];
+const appTypes = ['vue3', 'react', 'vue2', 'solid', 'svelte', 'ts', 'js'];
 const storageKey = 'appType';
 
 const isMobile = ref(window.innerWidth < MOBILE_BREAKPOINT);
@@ -47,6 +47,8 @@ const getTypeIcon = (type: string) => {
     vue3: '🟢',
     vue2: '🟩',
     react: '⚛️',
+    solid: '💠',
+    svelte: '🔥',
     ts: '🔷',
     js: '🟨'
   };

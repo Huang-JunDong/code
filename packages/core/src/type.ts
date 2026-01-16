@@ -7,16 +7,56 @@ export type Control =
   | 'format'
   | 'console';
 
+/**
+ * 支持的应用类型
+ * - vue/vue3: Vue 3.x 应用
+ * - vue2: Vue 2.x 应用
+ * - react: React 应用
+ * - svelte: Svelte 应用
+ * - solid: Solid.js 应用
+ * - html: 纯 HTML 页面
+ * - javascript/js: JavaScript 项目
+ * - typescript/ts: TypeScript 项目
+ */
 export type AppType =
   | 'vue'
   | 'vue2'
   | 'vue3'
   | 'react'
+  | 'svelte'
+  | 'solid'
   | 'html'
   | 'javascript'
   | 'js'
   | 'typescript'
   | 'ts';
+
+/**
+ * 验证是否为有效的 AppType
+ */
+export function isValidAppType(value: string): value is AppType {
+  const validTypes: AppType[] = [
+    'vue', 'vue2', 'vue3', 'react', 'svelte', 'solid',
+    'html', 'javascript', 'js', 'typescript', 'ts'
+  ];
+  return validTypes.includes(value as AppType);
+}
+
+/**
+ * 标准化 AppType（处理别名）
+ */
+export function normalizeAppType(appType: string): AppType {
+  const aliasMap: Record<string, AppType> = {
+    vue: 'vue3',
+    js: 'javascript',
+    ts: 'typescript',
+  };
+  const normalized = appType.toLowerCase();
+  if (aliasMap[normalized]) {
+    return aliasMap[normalized];
+  }
+  return isValidAppType(normalized) ? normalized : 'typescript';
+}
 
 export interface OnlineEditorOptions {
   /**

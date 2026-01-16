@@ -14,6 +14,7 @@ import JsonSVG from '@/assets/json.svg';
 import LessSVG from '@/assets/less.svg';
 import SassSVG from '@/assets/sass.svg';
 import ScssSVG from '@/assets/scss.svg';
+import SvelteSVG from '@/assets/svelte.svg';
 import DefaultFileSVG from '@/assets/default_file.svg';
 import RenameFile from './icons/rename-file.vue';
 import DeleteFile from './icons/delete-file.vue';
@@ -32,6 +33,7 @@ const iconMap: Record<string, string> = {
   less: LessSVG,
   sass: SassSVG,
   scss: ScssSVG,
+  svelte: SvelteSVG,
 };
 
 const props = withDefaults(
