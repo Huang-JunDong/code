@@ -127,6 +127,55 @@ type AppType = 'vue' | 'vue2' | 'vue3' | 'react' | 'svelte' | 'solid' | 'html' |
 type Control = 'refresh' | 'copy' | 'share' | 'docs' | 'github' | 'format' | 'console';
 ```
 
+## 🏗️ 生产环境构建（Worker 兼容）
+
+`online-editor` 依赖 Monaco 等能力，会用到 Web Worker。在某些静态部署场景（相对路径、非根路径、CDN/反向代理等）下，构建产物里的 Worker chunk 地址可能解析不符合预期，导致 Worker 404 或无法启动。
+
+一个通用做法是在构建完成后对产物做一次“构建后补丁”：把特定形式的 `new Worker(new URL(..., import.meta.url))` 改写为 `Blob + importScripts(...)`，让 Worker 使用 `location.href` 来解析并加载对应的 worker chunk。
+
+```js
+const fs = require('fs');
+const path = require('path');
+
+const distDir = process.argv[2]
+  ? path.resolve(process.cwd(), process.argv[2])
+  : path.resolve(process.cwd(), 'dist');
+
+function replaceWorkerUrls(filePath) {
+  const data = fs.readFileSync(filePath, 'utf8');
+  const workerPattern =
+    /new Worker\(""\+new URL\(""\+new URL\("([^"]+\.js)",import\.meta\.url\)\.href,self\.location\)\.href\)/g;
+
+  const newData = data.replace(workerPattern, (match, workerPath) => {
+    return `new Worker(URL.createObjectURL(new Blob([\`importScripts("\${new URL("${workerPath}",location.href).href}")\`],{type:"text/javascript"})))`;
+  });
+
+  if (newData !== data) fs.writeFileSync(filePath, newData, 'utf8');
+}
+
+function traverseDirectory(dir) {
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    if (stat.isDirectory()) traverseDirectory(filePath);
+    else if (file.endsWith('.js')) replaceWorkerUrls(filePath);
+  }
+}
+
+traverseDirectory(distDir);
+```
+
+构建命令示例：
+
+```json
+{
+  "scripts": {
+    "build": "vite build && node ./scripts/patch-workers.cjs dist"
+  }
+}
+```
+
 ## 📄 License
 
 [MIT](./LICENSE)

@@ -1,6 +1,6 @@
 {
-  "name": "website",
-  "version": "0.0.1",
+  "name": "web",
+  "version": "1.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build && node ./scripts/index.js",
@@ -16,6 +16,6 @@
     "vue-tsc": "^2.1.10"
   },
   "dependencies": {
-    "online-editor": "0.2.0"
+    "online-editor": "1.0.1"
   }
 }
