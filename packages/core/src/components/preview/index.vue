@@ -16,6 +16,100 @@ const iframe = ref<HTMLIFrameElement>();
 const loading = ref(true);
 let loadingTimer: ReturnType<typeof setTimeout> | null = null;
 let runId = 0;
+let erudaResizeObserver: ResizeObserver | null = null;
+let consoleSafeAreaRafId: number | null = null;
+let lastConsoleSafeAreaHeight = -1;
+
+function ensureConsoleSafeAreaStyle(doc: Document) {
+  const styleId = '__codeplayer_console_safe_area_style__';
+  if (doc.getElementById(styleId)) return;
+  const style = doc.createElement('style');
+  style.id = styleId;
+  style.textContent = `
+body {
+  padding-bottom: var(--codeplayer-console-safe-area, 0px) !important;
+}
+`.trim();
+  (doc.head || doc.documentElement).appendChild(style);
+}
+
+function scheduleSetConsoleSafeArea(height: number) {
+  const nextHeight = Math.max(0, Math.floor(height));
+  if (nextHeight === lastConsoleSafeAreaHeight) return;
+
+  if (consoleSafeAreaRafId !== null) {
+    cancelAnimationFrame(consoleSafeAreaRafId);
+    consoleSafeAreaRafId = null;
+  }
+
+  consoleSafeAreaRafId = requestAnimationFrame(() => {
+    consoleSafeAreaRafId = null;
+    if (nextHeight === lastConsoleSafeAreaHeight) return;
+    lastConsoleSafeAreaHeight = nextHeight;
+    setConsoleSafeArea(nextHeight);
+  });
+}
+
+function setConsoleSafeArea(height: number) {
+  const doc = iframe.value?.contentDocument;
+  if (!doc) return;
+  ensureConsoleSafeAreaStyle(doc);
+  doc.documentElement.style.setProperty(
+    '--codeplayer-console-safe-area',
+    `${Math.max(0, Math.floor(height))}px`
+  );
+}
+
+function getErudaDevtoolsElement() {
+  const eruda = (iframe.value?.contentWindow as any)?.__eruda;
+  return (eruda?._shadowRoot?.querySelector?.('.eruda-dev-tools') ??
+    null) as HTMLElement | null;
+}
+
+function updateConsoleSafeArea() {
+  if (!store.openConsole) {
+    scheduleSetConsoleSafeArea(0);
+    return;
+  }
+  const devtools = getErudaDevtoolsElement();
+  if (!devtools) return;
+  const view = devtools.ownerDocument.defaultView;
+  const display = view ? view.getComputedStyle(devtools).display : '';
+  if (display === 'none') {
+    scheduleSetConsoleSafeArea(0);
+    return;
+  }
+  scheduleSetConsoleSafeArea(devtools.getBoundingClientRect().height);
+}
+
+function installConsoleSafeAreaObserver() {
+  erudaResizeObserver?.disconnect();
+  erudaResizeObserver = null;
+  const devtools = getErudaDevtoolsElement();
+  if (!devtools) return;
+  if (typeof ResizeObserver === 'undefined') {
+    updateConsoleSafeArea();
+    return;
+  }
+  erudaResizeObserver = new ResizeObserver((entries) => {
+    if (!store.openConsole) {
+      scheduleSetConsoleSafeArea(0);
+      return;
+    }
+    const entry = entries[0];
+    const target = entry?.target as HTMLElement | undefined;
+    if (!target) return;
+    const view = target.ownerDocument.defaultView;
+    const display = view ? view.getComputedStyle(target).display : '';
+    if (display === 'none') {
+      scheduleSetConsoleSafeArea(0);
+      return;
+    }
+    scheduleSetConsoleSafeArea(entry.contentRect?.height ?? target.getBoundingClientRect().height);
+  });
+  erudaResizeObserver.observe(devtools);
+  updateConsoleSafeArea();
+}
 
 function beginLoading(delay = 0) {
   if (loadingTimer) {
@@ -62,6 +156,13 @@ onUnmounted(() => {
     clearTimeout(loadingTimer);
     loadingTimer = null;
   }
+  erudaResizeObserver?.disconnect();
+  erudaResizeObserver = null;
+  if (consoleSafeAreaRafId !== null) {
+    cancelAnimationFrame(consoleSafeAreaRafId);
+    consoleSafeAreaRafId = null;
+  }
+  lastConsoleSafeAreaHeight = -1;
 });
 
 const erudaPlugin = (hooks: Hooks) => {
@@ -92,6 +193,7 @@ eruda.init();`.trim()
         if (store.openConsole) {
           eruda.show();
         }
+        installConsoleSafeAreaObserver();
         eruda._entryBtn?._events?.click?.push(() => {
           // eruda transition is 0.3s
           setTimeout(() => {
@@ -100,6 +202,7 @@ eruda.init();`.trim()
             ) as HTMLElement | null;
             const display = (devtools as any)?.computedStyleMap?.()?.get?.('display')?.value;
             store.openConsole = display === 'block';
+            updateConsoleSafeArea();
           }, 300);
         });
         return true;
@@ -136,6 +239,9 @@ watch(
         eruda.hide();
       }
     }
+    setTimeout(() => {
+      installConsoleSafeAreaObserver();
+    }, 350);
   }
 );
 
@@ -187,6 +293,13 @@ async function renderSandbox() {
   beginLoading();
 
   // 建立一个新的 iframe
+  erudaResizeObserver?.disconnect();
+  erudaResizeObserver = null;
+  if (consoleSafeAreaRafId !== null) {
+    cancelAnimationFrame(consoleSafeAreaRafId);
+    consoleSafeAreaRafId = null;
+  }
+  lastConsoleSafeAreaHeight = -1;
   iframe.value?.remove();
   iframe.value = document.createElement('iframe');
   iframe.value.className = 'codeplayer-iframe';
