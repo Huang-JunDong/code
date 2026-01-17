@@ -3,7 +3,7 @@ import { watch, computed, ref, onUnmounted } from 'vue';
 import { store } from '@/store';
 import { atou } from '@/utils';
 import { getTemplate, File } from '@/compiler';
-import { OnlineEditorOptions } from '@/type';
+import { OnlineEditorOptions, EditorExportFile } from '@/type';
 import Toolbar from './toolbar/index.vue';
 import Splitter from './splitter/index.vue';
 import FileBar from './file-bar/index.vue';
@@ -12,11 +12,46 @@ import Preview from './preview/index.vue';
 import Loading from './loading/index.vue';
 
 const props = defineProps<{ options?: OnlineEditorOptions }>();
+const emit = defineEmits<{
+  (e: 'codeChange', files: EditorExportFile[]): void;
+}>();
 
 const loaded = ref(false);
 
 const CodeSlotName = computed(() => (store.reverse ? 'right' : 'left'));
 const PreviewSlotName = computed(() => (store.reverse ? 'left' : 'right'));
+
+const exportFiles = computed<EditorExportFile[]>(() => {
+  const files = store.files || {};
+  return Object.keys(files).map((filename) => {
+    const file = files[filename];
+    return {
+      filename,
+      code: file?.code ?? '',
+      isEntry: filename === store.entry,
+      isActive: filename === store.activeFile,
+    };
+  });
+});
+
+let emitRafId = 0;
+const scheduleEmit = () => {
+  if (emitRafId) {
+    cancelAnimationFrame(emitRafId);
+  }
+  emitRafId = requestAnimationFrame(() => {
+    emitRafId = 0;
+    emit('codeChange', exportFiles.value);
+  });
+};
+
+watch(
+  exportFiles,
+  () => {
+    scheduleEmit();
+  },
+  { immediate: true }
+);
 
 const handleReady = () => {
   loaded.value = true;
@@ -33,6 +68,10 @@ if (document.readyState === 'complete') {
 }
 
 onUnmounted(() => {
+  if (emitRafId) {
+    cancelAnimationFrame(emitRafId);
+    emitRafId = 0;
+  }
   window.removeEventListener('load', handleReady);
   document.removeEventListener('DOMContentLoaded', handleReady);
 });

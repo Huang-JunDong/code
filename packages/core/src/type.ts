@@ -140,3 +140,10 @@ export interface OnlineEditorOptions {
    */
   github?: string;
 }
+
+export interface EditorExportFile {
+  filename: string;
+  code: string;
+  isEntry: boolean;
+  isActive: boolean;
+}

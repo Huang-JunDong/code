@@ -116,6 +116,27 @@ createApp(App).mount('#app');`,
 | `document`     | `string`                 | -       | 文档链接地址               |
 | `github`       | `string`                 | -       | GitHub 地址                |
 
+## 📣 事件
+
+| 事件名 | 参数 | 说明 |
+|------|------|------|
+| `code-change` | `EditorExportFile[]` | 编辑器内容变化时触发，实时导出全部文件代码 |
+
+```vue
+<script setup lang="ts">
+import OnlineEditor, { type EditorExportFile } from 'online-editor';
+import 'online-editor/style.css';
+
+const handleCodeChange = (files: EditorExportFile[]) => {
+  console.log(files);
+};
+</script>
+
+<template>
+  <OnlineEditor @code-change="handleCodeChange" />
+</template>
+```
+
 ### AppType 类型
 
 ```typescript

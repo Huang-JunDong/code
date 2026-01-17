@@ -24,11 +24,19 @@
       </ul>
     </Transition>
   </div>
-  <OnlineEditor :options="options" class="codeplayer-container"></OnlineEditor>
+  <OnlineEditor
+    :options="options"
+    class="codeplayer-container"
+    @code-change="handleCodeChange"
+  ></OnlineEditor>
 </template>
 
 <script setup lang="ts">
-import OnlineEditor, { OnlineEditorOptions, AppType } from 'online-editor';
+import OnlineEditor, {
+  OnlineEditorOptions,
+  AppType,
+  type EditorExportFile,
+} from 'online-editor';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const MOBILE_BREAKPOINT = 768;
@@ -100,6 +108,12 @@ const options = computed<OnlineEditorOptions>(() => ({
   document: 'https://github.com/Huang-JunDong/code#readme',
   github: 'https://github.com/Huang-JunDong/code',
 }));
+
+const currentFiles = ref<EditorExportFile[]>([]);
+const handleCodeChange = (files: EditorExportFile[]) => {
+  currentFiles.value = files;
+  console.log(files,'当前代码文件');
+};
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
