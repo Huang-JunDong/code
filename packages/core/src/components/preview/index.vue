@@ -3,6 +3,7 @@ import { ref, Ref, onMounted, onUnmounted, watch } from 'vue';
 import { store } from '@/store';
 import { MapFile } from '@/constant';
 import { Compiler } from '@/compiler';
+import Loading from '../loading/index.vue';
 import {
   Hooks,
   ComplierPluginParams,
@@ -12,6 +13,32 @@ import {
 const errors = ref<Error[]>([]);
 const previewDOM = ref() as Ref<HTMLDivElement>;
 const iframe = ref<HTMLIFrameElement>();
+const loading = ref(true);
+let loadingTimer: ReturnType<typeof setTimeout> | null = null;
+let runId = 0;
+
+function beginLoading(delay = 0) {
+  if (loadingTimer) {
+    clearTimeout(loadingTimer);
+    loadingTimer = null;
+  }
+  if (delay <= 0) {
+    loading.value = true;
+    return;
+  }
+  loadingTimer = setTimeout(() => {
+    loading.value = true;
+    loadingTimer = null;
+  }, delay);
+}
+
+function endLoading() {
+  if (loadingTimer) {
+    clearTimeout(loadingTimer);
+    loadingTimer = null;
+  }
+  loading.value = false;
+}
 
 // 防抖定时器
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -30,6 +57,10 @@ function debouncedRefresh() {
 onUnmounted(() => {
   if (debounceTimer) {
     clearTimeout(debounceTimer);
+  }
+  if (loadingTimer) {
+    clearTimeout(loadingTimer);
+    loadingTimer = null;
   }
 });
 
@@ -152,6 +183,9 @@ async function renderSandbox() {
     return;
   }
 
+  const currentRunId = ++runId;
+  beginLoading();
+
   // 建立一个新的 iframe
   iframe.value?.remove();
   iframe.value = document.createElement('iframe');
@@ -159,33 +193,59 @@ async function renderSandbox() {
   previewDOM.value.append(iframe.value);
 
   const result: { errors: Error[] } = { errors: [] };
-  await compiler.run({
-    fileMap: store.files,
-    result,
-    entry: store.entry,
-    iframe: iframe.value as HTMLIFrameElement,
-    render: true,
-  });
-  errors.value = result.errors;
+  try {
+    await compiler.run({
+      fileMap: store.files,
+      result,
+      entry: store.entry,
+      iframe: iframe.value as HTMLIFrameElement,
+      render: true,
+    });
+    errors.value = result.errors;
+  } catch (e) {
+    errors.value = [e as Error];
+  } finally {
+    if (currentRunId === runId) {
+      endLoading();
+    }
+  }
 }
 
 async function refreshSandbox() {
   if (!previewDOM.value) {
     return;
   }
+  if (!iframe.value) {
+    return;
+  }
+
+  const currentRunId = ++runId;
+  beginLoading(1500);
+
   // 建立一个新的 iframe
   const result: { errors: Error[] } = { errors: [] };
-  await compiler.run({
-    fileMap: store.files,
-    result,
-    entry: store.entry,
-    iframe: iframe.value as HTMLIFrameElement,
-    render: false,
-  });
-  errors.value = result.errors;
+  try {
+    await compiler.run({
+      fileMap: store.files,
+      result,
+      entry: store.entry,
+      iframe: iframe.value as HTMLIFrameElement,
+      render: false,
+    });
+    errors.value = result.errors;
+  } catch (e) {
+    errors.value = [e as Error];
+  } finally {
+    if (currentRunId === runId) {
+      endLoading();
+    }
+  }
 }
 </script>
 
 <template>
-  <div class="codeplayer-iframe-container" ref="previewDOM"></div>
+  <div class="codeplayer-iframe-container">
+    <div class="codeplayer-iframe-host" ref="previewDOM"></div>
+    <Loading v-if="loading" />
+  </div>
 </template>
