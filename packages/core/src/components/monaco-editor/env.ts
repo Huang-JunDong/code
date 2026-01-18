@@ -247,33 +247,51 @@ function isReactLikeProject(store: Store) {
   return typeof imports.react === 'string' || typeof imports['react/'] === 'string';
 }
 
-let reactTypeLibsLoaded = false;
+const reactExtraLibPaths = [
+  'file:///node_modules/@types/react/index.d.ts',
+  'file:///node_modules/@types/react/jsx-runtime.d.ts',
+  'file:///node_modules/@types/react/jsx-dev-runtime.d.ts',
+  'file:///node_modules/@types/react-dom/index.d.ts',
+  'file:///node_modules/@types/react-dom/client.d.ts',
+];
+
+let reactTypeLibsLoadedMajor: string | null = null;
 let reactTypeLibsLoading: Promise<void> | null = null;
-async function ensureReactTypeLibs() {
-  if (reactTypeLibsLoaded) return;
+async function ensureReactTypeLibs(typesMajor: string) {
+  if (reactTypeLibsLoadedMajor === typesMajor) return;
   if (reactTypeLibsLoading) return reactTypeLibsLoading;
 
   reactTypeLibsLoading = (async () => {
+    if (reactTypeLibsLoadedMajor && reactTypeLibsLoadedMajor !== typesMajor) {
+      for (const filePath of reactExtraLibPaths) {
+        extraLibDisposablesTs.get(filePath)?.dispose();
+        extraLibDisposablesTs.delete(filePath);
+        extraLibDisposablesJs.get(filePath)?.dispose();
+        extraLibDisposablesJs.delete(filePath);
+      }
+      reactTypeLibsLoadedMajor = null;
+    }
+
     await Promise.all([
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/index.d.ts',
-        'https://cdn.jsdelivr.net/npm/@types/react@18/index.d.ts'
+        `https://cdn.jsdelivr.net/npm/@types/react@${typesMajor}/index.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/jsx-runtime.d.ts',
-        'https://cdn.jsdelivr.net/npm/@types/react@18/jsx-runtime.d.ts'
+        `https://cdn.jsdelivr.net/npm/@types/react@${typesMajor}/jsx-runtime.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/jsx-dev-runtime.d.ts',
-        'https://cdn.jsdelivr.net/npm/@types/react@18/jsx-dev-runtime.d.ts'
+        `https://cdn.jsdelivr.net/npm/@types/react@${typesMajor}/jsx-dev-runtime.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react-dom/index.d.ts',
-        'https://cdn.jsdelivr.net/npm/@types/react-dom@18/index.d.ts'
+        `https://cdn.jsdelivr.net/npm/@types/react-dom@${typesMajor}/index.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react-dom/client.d.ts',
-        'https://cdn.jsdelivr.net/npm/@types/react-dom@18/client.d.ts'
+        `https://cdn.jsdelivr.net/npm/@types/react-dom@${typesMajor}/client.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/scheduler/index.d.ts',
@@ -294,7 +312,7 @@ async function ensureReactTypeLibs() {
     ]);
 
     if (extraLibDisposablesTs.size > 0) {
-      reactTypeLibsLoaded = true;
+      reactTypeLibsLoadedMajor = typesMajor;
     }
   })().finally(() => {
     reactTypeLibsLoading = null;
@@ -449,6 +467,21 @@ export async function reloadLanguageTools(store: Store, withMarkers = true) {
       '@vue/runtime-core': version,
       '@vue/runtime-dom': version,
       '@vue/shared': version,
+    };
+  }
+
+  if (dependencies.vue) {
+    const version = dependencies.vue;
+    dependencies = {
+      ...dependencies,
+      '@vue/compiler-core': dependencies['@vue/compiler-core'] || version,
+      '@vue/compiler-dom': dependencies['@vue/compiler-dom'] || version,
+      '@vue/compiler-sfc': dependencies['@vue/compiler-sfc'] || version,
+      '@vue/compiler-ssr': dependencies['@vue/compiler-ssr'] || version,
+      '@vue/reactivity': dependencies['@vue/reactivity'] || version,
+      '@vue/runtime-core': dependencies['@vue/runtime-core'] || version,
+      '@vue/runtime-dom': dependencies['@vue/runtime-dom'] || version,
+      '@vue/shared': dependencies['@vue/shared'] || version,
     };
   }
 
