@@ -35,11 +35,11 @@ function readDocs() {
   <div
     v-if="!store.excludeTools.includes('docs')"
     ref="reference"
-    @click="readDocs"
     class="toolbar-icon"
     role="button"
     aria-label="查看文档"
     tabindex="0"
+    @click="readDocs"
     @keydown.enter="readDocs"
     @keydown.space.prevent="readDocs"
   >

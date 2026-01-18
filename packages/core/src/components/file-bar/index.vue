@@ -110,20 +110,20 @@ const newFileError = computed(() => {
       </div>
       <!-- 新增文件输入框: -->
       <FileInput
+        v-model="newFilename"
         :show="showNewFile && !originFilename"
         :error="newFileError"
-        v-model="newFilename"
-        @handleBlur="handleFilenameChange"
-        @handleKeyDown="handleFilenameKeyDown"
+        @handle-blur="handleFilenameChange"
+        @handle-key-down="handleFilenameKeyDown"
       />
       <FileList
-        :originFilename="originFilename"
+        v-model:model-value="newFilename"
+        :origin-filename="originFilename"
         :error="newFileError"
-        @changeActiveFile="changeActiveFile"
-        @handleClickRename="handleEditFilename"
-        @handleFilenameChange="handleFilenameChange"
-        @handleFilenameKeyDown="handleFilenameKeyDown"
-        v-model:modelValue="newFilename"
+        @change-active-file="changeActiveFile"
+        @handle-click-rename="handleEditFilename"
+        @handle-filename-change="handleFilenameChange"
+        @handle-filename-key-down="handleFilenameKeyDown"
       />
     </div>
   </div>

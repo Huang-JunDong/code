@@ -1,11 +1,6 @@
 import * as Babel from '@babel/standalone';
 import { Hooks, CompilerPluginParams } from '@/compiler/type';
-import {
-  createRemoteLoader,
-  detectFramework,
-  collectErrors,
-  getErrorResult,
-} from './utils';
+import { createRemoteLoader, detectFramework, collectErrors, getErrorResult } from './utils';
 
 // CDN 源配置（主源 + 备选源）
 const SOLID_PRESET_URLS = [
@@ -15,10 +10,7 @@ const SOLID_PRESET_URLS = [
 ];
 
 // 使用工厂函数创建带缓存和容灾的加载器
-const loadSolidPreset = createRemoteLoader<any>(
-  SOLID_PRESET_URLS[0],
-  SOLID_PRESET_URLS.slice(1)
-);
+const loadSolidPreset = createRemoteLoader<any>(SOLID_PRESET_URLS[0], SOLID_PRESET_URLS.slice(1));
 
 let presetRegistered = false;
 let presetRegistering: Promise<void> | null = null;
@@ -38,9 +30,7 @@ async function ensureSolidPreset(): Promise<void> {
   return presetRegistering;
 }
 
-export async function transformSolid(
-  params: CompilerPluginParams
-): Promise<Error[] | undefined> {
+export async function transformSolid(params: CompilerPluginParams): Promise<Error[] | undefined> {
   // 使用统一的框架检测函数
   if (!detectFramework(params, ['solid-js'])) {
     return undefined;
@@ -68,10 +58,7 @@ export async function transformSolid(
         try {
           const result = Babel.transform(code, {
             filename,
-            presets: [
-              ['typescript', { isTSX: true, allExtensions: true }],
-              'solid',
-            ],
+            presets: [['typescript', { isTSX: true, allExtensions: true }], 'solid'],
           });
           file.compiled.js = result?.code || '';
         } catch (error) {

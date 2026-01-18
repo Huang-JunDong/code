@@ -56,13 +56,13 @@ onUnmounted(() => {
 </script>
 <template>
   <div
+    ref="reference"
     class="operate-btn delete-operate"
     :class="{ 'hide-file-operate': store.entry === props.filename }"
-    @click="deleteFile"
-    ref="reference"
     role="button"
     aria-label="删除文件"
     tabindex="0"
+    @click="deleteFile"
     @keydown.enter="deleteFile"
     @keydown.space.prevent="deleteFile"
   >

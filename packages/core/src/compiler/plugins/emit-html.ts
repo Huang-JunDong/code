@@ -1,18 +1,9 @@
 import { CompilerPluginParams, CompilerPluginResult } from '@/compiler';
 import { Hooks } from '@/compiler/type';
-import {
-  modulesKey,
-  exportKey,
-  dynamicImportKey,
-  nextKey,
-  MapFile,
-} from '@/constant';
+import { modulesKey, exportKey, dynamicImportKey, nextKey, MapFile } from '@/constant';
 
 // 使用 WeakMap 关联 iframe 与其执行状态，避免内存泄漏
-const iframeStateMap = new WeakMap<
-  HTMLIFrameElement,
-  { count: number; nextIndex: number }
->();
+const iframeStateMap = new WeakMap<HTMLIFrameElement, { count: number; nextIndex: number }>();
 
 function getIframeState(iframe: HTMLIFrameElement) {
   let state = iframeStateMap.get(iframe);
@@ -23,10 +14,7 @@ function getIframeState(iframe: HTMLIFrameElement) {
   return state;
 }
 
-async function emitHtml(
-  params: CompilerPluginParams,
-  result: CompilerPluginResult
-) {
+async function emitHtml(params: CompilerPluginParams, result: CompilerPluginResult) {
   const { iframe, render, fileMap } = params;
   const importMap = fileMap[MapFile].code;
   const { html, links, modules, styles } = result;
@@ -35,8 +23,8 @@ async function emitHtml(
   state.count++;
   const currentCount = state.count;
 
-  let iframeDoc = iframe.contentDocument as Document;
-  let iframeWindow = iframe.contentWindow as any;
+  const iframeDoc = iframe.contentDocument as Document;
+  const iframeWindow = iframe.contentWindow as any;
 
   if (!iframeDoc || !iframeWindow) {
     return;
@@ -75,8 +63,8 @@ async function emitHtml(
 
   const map = flattenScopeMappings(JSON.parse(importMap));
   // links
-  for (let link of links) {
-    for (let key in map) {
+  for (const link of links) {
+    for (const key in map) {
       if (link === key || `${link}/` === key) {
         const styleEl = document.createElement('link');
         styleEl.setAttribute('href', map[key]);
@@ -111,7 +99,7 @@ async function emitHtml(
     if (currentCount !== state.count || i >= modules.length) {
       return;
     }
-    let script = modules[i];
+    const script = modules[i];
     const scriptEl = document.createElement('script');
     scriptEl.setAttribute('type', 'module');
     scriptEl.setAttribute('replace', 'true');
@@ -124,8 +112,7 @@ async function emitHtml(
     // send ok in the module script to ensure sequential evaluation
     // of multiple proxy.eval() calls
     scriptEl.innerHTML =
-      script +
-      `\nwindow.${nextKey}[${currentIndex}] && window.${nextKey}[${currentIndex}]();`;
+      script + `\nwindow.${nextKey}[${currentIndex}] && window.${nextKey}[${currentIndex}]();`;
     localIndex++;
     iframeDoc.head.appendChild(scriptEl);
     await done;
@@ -142,7 +129,7 @@ function flattenScopeMappings(importMap: any) {
   const imports = importMap?.imports ?? {};
   const scopes = importMap?.scopes ?? {};
 
-  for (let key in imports) {
+  for (const key in imports) {
     flattenedMappings[key] = imports[key];
   }
 

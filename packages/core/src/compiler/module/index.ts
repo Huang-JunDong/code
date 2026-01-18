@@ -68,11 +68,7 @@ function processFile(params: {
     });
   }
 
-  let [js, importedFiles, _links] = processModule(
-    files,
-    file.compiled.js,
-    file.filename
-  );
+  const [js, importedFiles, _links] = processModule(files, file.compiled.js, file.filename);
   // append css
   if (file.compiled.css) {
     styles.push(file.compiled.css);
@@ -82,7 +78,9 @@ function processFile(params: {
     for (const imported of importedFiles) {
       const importedFile = files[imported];
       if (!importedFile) {
-        console.warn(`Warning: imported file "${imported}" not found in files`);
+        if (import.meta.env.DEV) {
+          console.warn(`Warning: imported file "${imported}" not found in files`);
+        }
         continue;
       }
       processFile({
@@ -169,10 +167,7 @@ function processModule(
         const importId = defineImport(node, node.source.value);
         for (const spec of node.specifiers) {
           if (spec.type === 'ImportSpecifier') {
-            idToImportMap.set(
-              spec.local.name,
-              `${importId}.${(spec.imported as Identifier).name}`
-            );
+            idToImportMap.set(spec.local.name, `${importId}.${(spec.imported as Identifier).name}`);
           } else if (spec.type === 'ImportDefaultSpecifier') {
             idToImportMap.set(spec.local.name, `${importId}.default`);
           } else {
@@ -268,17 +263,10 @@ function processModule(
         // let binding used in a property shorthand
         // { foo } -> { foo: __import_x__.foo }
         // skip for destructure patterns
-        if (
-          !(parent as any).inPattern ||
-          isInDestructureAssignment(parent, parentStack)
-        ) {
+        if (!(parent as any).inPattern || isInDestructureAssignment(parent, parentStack)) {
           s.appendLeft(id.end!, `: ${binding}`);
         }
-      } else if (
-        parent &&
-        parent.type === 'ClassDeclaration' &&
-        id === parent.superClass
-      ) {
+      } else if (parent && parent.type === 'ClassDeclaration' && id === parent.superClass) {
         if (!declaredConst.has(id.name)) {
           declaredConst.add(id.name);
           // locate the top-most node containing the class declaration
@@ -298,11 +286,7 @@ function processModule(
         const arg = parent.arguments[0];
         if (arg.type === 'StringLiteral' && arg.value.startsWith('./')) {
           s.overwrite(node.start!, node.start! + 6, dynamicImportKey);
-          s.overwrite(
-            arg.start!,
-            arg.end!,
-            JSON.stringify(arg.value.replace(/^\.\/+/, ''))
-          );
+          s.overwrite(arg.start!, arg.end!, JSON.stringify(arg.value.replace(/^\.\/+/, '')));
         }
       }
     },

@@ -10,10 +10,7 @@ import CopyIcon from './icons/copy.vue';
 import ConsoleIcon from './icons/console.vue';
 
 const showDivider = computed(() => {
-  if (
-    store.excludeTools.includes('docs') &&
-    store.excludeTools.includes('github')
-  ) {
+  if (store.excludeTools.includes('docs') && store.excludeTools.includes('github')) {
     return false;
   }
   if (
@@ -36,14 +33,14 @@ const toggleMobileFileBar = () => {
   <div class="codeplayer-toolbar" :class="`codeplayer-toolbar-top`">
     <div class="toolbar-left">
       <!-- 移动端显示文件栏切换按钮 -->
-      <button 
-        v-if="store.isMobile && store.showFileBar" 
+      <button
+        v-if="store.isMobile && store.showFileBar"
         class="mobile-menu-btn"
-        @click="toggleMobileFileBar"
         title="文件列表"
+        @click="toggleMobileFileBar"
       >
         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
         </svg>
       </button>
       <SettingIcon />
@@ -51,7 +48,7 @@ const toggleMobileFileBar = () => {
     <div class="toolbar-right">
       <DocsIcon />
       <GithubIcon />
-      <div class="vertical-divider" v-if="showDivider && !store.isMobile"></div>
+      <div v-if="showDivider && !store.isMobile" class="vertical-divider"></div>
       <ConsoleIcon />
       <CopyIcon />
       <RefreshIcon />

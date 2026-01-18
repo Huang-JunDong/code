@@ -19,9 +19,7 @@ const loadSvelteCompiler = createRemoteLoader<any>(
   SVELTE_COMPILER_URLS.slice(1)
 );
 
-export async function transformSvelte(
-  params: CompilerPluginParams
-): Promise<Error[] | undefined> {
+export async function transformSvelte(params: CompilerPluginParams): Promise<Error[] | undefined> {
   // 使用统一的框架检测函数，与 Solid 保持一致
   if (!detectFramework(params, ['svelte'])) {
     return undefined;
@@ -29,9 +27,7 @@ export async function transformSvelte(
 
   const { fileMap } = params;
   const files = Object.values(fileMap);
-  const svelteFiles = files.filter(({ filename }) =>
-    filename.endsWith('.svelte')
-  );
+  const svelteFiles = files.filter(({ filename }) => filename.endsWith('.svelte'));
 
   if (svelteFiles.length === 0) {
     return undefined;

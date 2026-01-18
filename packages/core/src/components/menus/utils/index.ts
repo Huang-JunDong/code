@@ -42,15 +42,10 @@ export const filterAttrs = (
 };
 
 export const handleCamelCase = (arg: string): string => {
-  return arg.replace(
-    /[A-Z]/g,
-    (res, index) => `${index ? '-' : ''}${res.toLowerCase()}`
-  );
+  return arg.replace(/[A-Z]/g, (res, index) => `${index ? '-' : ''}${res.toLowerCase()}`);
 };
 
-export const handleStyle = (
-  params: string | { [key: string]: string }
-): string => {
+export const handleStyle = (params: string | { [key: string]: string }): string => {
   if (typeof params === 'string') return params;
   const res: string[] = [];
   Object.keys(params).forEach((key) => {
@@ -67,12 +62,7 @@ export const layoutMenuPositionEffect = (
 ): void => {
   // 计算位置
   const { width, height } = computeRectPosition(menu);
-  const {
-    x: baseX,
-    y: baseY,
-    width: baseW = 0,
-    height: baseH = 0,
-  } = computeRectPosition(base);
+  const { x: baseX, y: baseY, width: baseW = 0, height: baseH = 0 } = computeRectPosition(base);
 
   let currentDirection = direction;
 

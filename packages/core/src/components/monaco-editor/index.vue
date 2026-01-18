@@ -1,6 +1,6 @@
 <template>
   <div class="codeplayer-monaco-editor-outer">
-    <div class="codeplayer-monaco-editor" ref="containerRef"></div>
+    <div ref="containerRef" class="codeplayer-monaco-editor"></div>
     <div class="code-tools">
       <FormatIcon @click="formatCode" />
       <CopyIcon />
@@ -9,15 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  onMounted,
-  onBeforeUnmount,
-  ref,
-  shallowRef,
-  nextTick,
-  watch,
-  computed,
-} from 'vue';
+import { onMounted, onBeforeUnmount, ref, shallowRef, nextTick, watch, computed } from 'vue';
 import * as monaco from 'monaco-editor';
 import { disposeLanguageTools, initMonaco, loadWasm } from './env';
 import { getOrCreateModel } from './utils';
@@ -66,42 +58,42 @@ onMounted(async () => {
     'javascript',
     'let temp = 1'
   );
-  
+
   // TypeScript
   tempTsModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.ts`),
     'typescript',
     'let temp: number = 1'
   );
-  
+
   // JSX
   tempJsxModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.jsx`),
     'javascript',
     'const App = () => <div />'
   );
-  
+
   // TSX
   tempTsxModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.tsx`),
     'typescript',
     'const App: React.FC = () => <div />'
   );
-  
+
   // 创建临时 CSS model 以激活 CSS 语言服务
   tempCssModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.css`),
     'css',
     'body { color: red; }'
   );
-  
+
   // 创建临时 HTML model 以激活 HTML 语言服务
   tempHtmlModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.html`),
     'html',
     '<!DOCTYPE html><html></html>'
   );
-  
+
   // 创建临时 JSON model 以激活 JSON 语言服务
   tempJsonModel.value = getOrCreateModel(
     monaco.Uri.parse(`inmemory://model/temp.json`),

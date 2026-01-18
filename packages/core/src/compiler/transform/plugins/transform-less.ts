@@ -1,9 +1,7 @@
 import less from 'less';
 import { Hooks, CompilerPluginParams } from '@/compiler/type';
 
-export async function transformLess(
-  params: CompilerPluginParams
-): Promise<Error[] | undefined> {
+export async function transformLess(params: CompilerPluginParams): Promise<Error[] | undefined> {
   const { fileMap } = params;
   const files = Object.values(fileMap);
   const errors: Error[] = [];

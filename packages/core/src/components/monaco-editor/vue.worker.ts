@@ -45,10 +45,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
   }
 
   worker.initialize(
-    (
-      ctx: monaco.worker.IWorkerContext<WorkerHost>,
-      { tsconfig, dependencies }: CreateData
-    ) => {
+    (ctx: monaco.worker.IWorkerContext<WorkerHost>, { tsconfig, dependencies }: CreateData) => {
       const { options: compilerOptions } = ts.convertCompilerOptionsFromJson(
         tsconfig?.compilerOptions || {
           allowImportingTsExtensions: true,
@@ -62,17 +59,9 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
         ''
       );
       const env = createServiceEnvironment();
-      const host = createLanguageHost(
-        ctx.getMirrorModels,
-        env,
-        '/',
-        compilerOptions
-      );
+      const host = createLanguageHost(ctx.getMirrorModels, env, '/', compilerOptions);
       const jsDelivrFs = createJsDelivrFs(ctx.host.onFetchCdnFile);
-      const jsDelivrUriResolver = createJsDelivrUriResolver(
-        '/node_modules',
-        dependencies
-      );
+      const jsDelivrUriResolver = createJsDelivrUriResolver('/node_modules', dependencies);
 
       if (locale) {
         env.locale = locale;
@@ -86,12 +75,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
       return createLanguageService(
         { typescript: ts as any },
         env,
-        resolveConfig(
-          ts as any,
-          {},
-          compilerOptions,
-          tsconfig.vueCompilerOptions || {}
-        ),
+        resolveConfig(ts as any, {}, compilerOptions, tsconfig.vueCompilerOptions || {}),
         host
       );
     }

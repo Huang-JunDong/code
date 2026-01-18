@@ -32,9 +32,9 @@ onUnmounted(() => {
 </script>
 <template>
   <div
+    ref="reference"
     data-toggle="tooltip"
     class="operate-btn"
-    ref="reference"
     role="button"
     aria-label="重命名文件"
     tabindex="0"

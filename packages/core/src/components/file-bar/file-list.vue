@@ -76,10 +76,10 @@ const getIcon = (filename: string) => {
         v-if="props.originFilename === filename"
         :show="props.originFilename === filename"
         :error="props.error"
-        :modelValue="modelValue"
-        @update:modelValue="(val) => emit('update:modelValue', val)"
-        @handleBlur="() => emit('handleFilenameChange')"
-        @handleKeyDown="(e) => emit('handleFilenameKeyDown', e)"
+        :model-value="modelValue"
+        @update:model-value="(val) => emit('update:modelValue', val)"
+        @handle-blur="() => emit('handleFilenameChange')"
+        @handle-key-down="(e) => emit('handleFilenameKeyDown', e)"
       />
       <div
         v-else
@@ -93,7 +93,7 @@ const getIcon = (filename: string) => {
           <img class="file-item-icon" :src="getIcon(filename)" />
           <div class="file-item-name">{{ filename }}</div>
         </div>
-        <div class="file-right" v-if="filename !== MapFile">
+        <div v-if="filename !== MapFile" class="file-right">
           <RenameFile @click="() => emit('handleClickRename', filename)" />
           <DeleteFile :filename="filename" />
           <!-- <HomeFile :filename="filename" /> -->

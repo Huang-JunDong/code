@@ -25,7 +25,7 @@ export interface Store {
   openConsole: boolean;
   reverse: boolean;
   excludeTools: Control[];
-  editor: any | null; // code Mirror 编辑器
+  editor: any | null; // Monaco Editor 实例
   rerenderID: number; // 用于 preview 刷新的标识，当点击刷新按钮该值 +1 触发刷新
   codeSize: number;
   vueVersion: 2 | 3;
@@ -87,9 +87,7 @@ export const store = reactive<Store>({
   vueVersion: Number(params.get('vueVersion') || 3) as 2 | 3,
   typescriptVersion: '5.0.4',
   theme:
-    (params.get('theme') as Theme) ||
-    (localStorage.getItem(LocalThemeKey) as Theme) ||
-    'light',
+    (params.get('theme') as Theme) || (localStorage.getItem(LocalThemeKey) as Theme) || 'light',
   reloadLanguageTools: () => {},
   document: safeDecodeURIComponent(params.get('document') || 'https://github.com'),
   github: safeDecodeURIComponent(params.get('github') || 'https://github.com'),
@@ -119,7 +117,7 @@ watch(
       return;
     }
     const fileMap: Record<string, string> = {};
-    for (let key in store.files) {
+    for (const key in store.files) {
       fileMap[key] = store.files[key].code;
     }
     location.hash = utoa(JSON.stringify(fileMap));
@@ -136,7 +134,7 @@ watch(
 );
 
 function syncStoreToUrl(keys: string[]) {
-  for (let key of keys) {
+  for (const key of keys) {
     watch(
       () => store[key as keyof typeof store],
       (val) => {

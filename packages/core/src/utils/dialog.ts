@@ -32,9 +32,7 @@ export const dialog = (options: {
   </div>
 </div>`;
   document.body.append(dialogRef);
-  const closeIcon = document.querySelector(
-    '#__codeplayer-dialog-close__'
-  ) as HTMLDivElement;
+  const closeIcon = document.querySelector('#__codeplayer-dialog-close__') as HTMLDivElement;
   const cancelIcon = document.querySelector(
     '#__codeplayer-dialog-button-cancel__'
   ) as HTMLDivElement;

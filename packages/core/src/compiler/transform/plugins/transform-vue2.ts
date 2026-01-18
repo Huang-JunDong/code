@@ -14,9 +14,7 @@ import less from 'less';
 import { compileString as compileSassString } from 'sass';
 import { Hooks, CompilerPluginParams } from '@/compiler/type';
 
-export const transformVue2 = async (
-  params: CompilerPluginParams
-): Promise<Error[] | undefined> => {
+export const transformVue2 = async (params: CompilerPluginParams): Promise<Error[] | undefined> => {
   const { fileMap } = params;
   const files = Object.values(fileMap);
   const _errors: Error[] = [];
@@ -46,9 +44,7 @@ export const transformVue2 = async (
         const isTS = scriptLang === 'ts';
 
         if (scriptLang && scriptLang !== 'ts' && scriptLang !== 'js') {
-          _errors.push(
-            new Error(`Only lang="ts" or lang="js" is supported for <script> blocks.`)
-          );
+          _errors.push(new Error(`Only lang="ts" or lang="js" is supported for <script> blocks.`));
           return;
         }
 
@@ -73,12 +69,7 @@ export const transformVue2 = async (
 
         // template
         if (descriptor.template && !descriptor.scriptSetup) {
-          const [code, templateErrors] = await doCompileTemplate(
-            descriptor,
-            id,
-            bindings,
-            isTS
-          );
+          const [code, templateErrors] = await doCompileTemplate(descriptor, id, bindings, isTS);
           if (templateErrors) {
             _errors.push(...templateErrors);
             return;
@@ -87,9 +78,7 @@ export const transformVue2 = async (
         }
 
         if (hasScoped) {
-          appendSharedCode(
-            `\n${COMP_IDENTIFIER}._scopeId = ${JSON.stringify(`${id}`)}`
-          );
+          appendSharedCode(`\n${COMP_IDENTIFIER}._scopeId = ${JSON.stringify(`${id}`)}`);
         }
 
         if (clientCode) {
@@ -101,7 +90,7 @@ export const transformVue2 = async (
         }
 
         // css 处理
-        let [css, styleErrors] = await doCompileStyle(descriptor, id, filename);
+        const [css, styleErrors] = await doCompileStyle(descriptor, id, filename);
         if (styleErrors) {
           _errors.push(...styleErrors);
           return;
@@ -127,10 +116,7 @@ async function doCompileStyle(
 
   for (const style of descriptor.styles) {
     if (style.module) {
-      return [
-        '',
-        [new Error(`<style module> is not supported in the playground.`)],
-      ];
+      return ['', [new Error(`<style module> is not supported in the playground.`)]];
     }
 
     let source = style.content;
@@ -162,14 +148,11 @@ async function doCompileStyle(
       // postcss uses pathToFileURL which isn't polyfilled in the browser
       // ignore these errors for now
       const firstError = styleResult.errors[0] as string | Error;
-      const errorMessage =
-        typeof firstError === 'string' ? firstError : firstError?.message;
+      const errorMessage = typeof firstError === 'string' ? firstError : firstError?.message;
       if (!errorMessage?.includes('pathToFileURL')) {
         const allErrors = [
           ...errors,
-          ...styleResult.errors.map((e) =>
-            typeof e === 'string' ? new Error(e) : (e as Error)
-          ),
+          ...styleResult.errors.map((e) => (typeof e === 'string' ? new Error(e) : (e as Error))),
         ];
         return ['', allErrors];
       }
@@ -196,18 +179,15 @@ async function doCompileScript(
     return [
       '',
       undefined,
-      [
-        new Error(
-          `Only lang="ts" or lang="js" is supported for <script> blocks.`
-        ),
-      ],
+      [new Error(`Only lang="ts" or lang="js" is supported for <script> blocks.`)],
     ];
   }
 
   if (descriptor.script || descriptor.scriptSetup) {
     try {
-      const babelParserPlugins: SFCScriptCompileOptions['babelParserPlugins'] =
-        isTS ? ['typescript', 'jsx'] : undefined;
+      const babelParserPlugins: SFCScriptCompileOptions['babelParserPlugins'] = isTS
+        ? ['typescript', 'jsx']
+        : undefined;
       const compiledScript = compileScript(descriptor, {
         // ...vue3SFCOptions?.script,
         id,
@@ -215,13 +195,7 @@ async function doCompileScript(
         isProd: false,
         sourceMap: true,
       });
-      let code =
-        `\n` +
-        rewriteDefault(
-          compiledScript.content,
-          COMP_IDENTIFIER,
-          babelParserPlugins
-        );
+      let code = `\n` + rewriteDefault(compiledScript.content, COMP_IDENTIFIER, babelParserPlugins);
 
       if ((descriptor.script || descriptor.scriptSetup)!.lang === 'ts') {
         code = await transform(code, {

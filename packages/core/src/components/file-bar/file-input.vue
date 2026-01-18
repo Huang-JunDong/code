@@ -32,18 +32,18 @@ watch(
 </script>
 
 <template>
-  <div class="new-file-container" v-show="props.show">
+  <div v-show="props.show" class="new-file-container">
     <input
       id="new-filename-input"
+      ref="fileInputDOM"
       class="new-file-input"
       autoComplete="off"
       :value="props.modelValue"
       @input="(e) => emit('update:modelValue', (e.target as HTMLInputElement).value)"
       @keydown="(e) => emit('handleKeyDown', e)"
       @blur="() => emit('handleBlur')"
-      ref="fileInputDOM"
     />
-    <div class="new-file-error" v-if="props.error">
+    <div v-if="props.error" class="new-file-error">
       {{ props.error }}
     </div>
   </div>

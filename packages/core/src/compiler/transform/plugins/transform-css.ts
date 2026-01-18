@@ -1,8 +1,6 @@
 import { Hooks, CompilerPluginParams } from '@/compiler/type';
 
-export async function transformCSS(
-  params: CompilerPluginParams
-): Promise<Error[] | undefined> {
+export async function transformCSS(params: CompilerPluginParams): Promise<Error[] | undefined> {
   const { fileMap } = params;
   const files = Object.values(fileMap);
 

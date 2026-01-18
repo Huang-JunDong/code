@@ -1,11 +1,4 @@
-export type Control =
-  | 'refresh'
-  | 'copy'
-  | 'share'
-  | 'docs'
-  | 'github'
-  | 'format'
-  | 'console';
+export type Control = 'refresh' | 'copy' | 'share' | 'docs' | 'github' | 'format' | 'console';
 
 /**
  * 支持的应用类型
@@ -36,8 +29,17 @@ export type AppType =
  */
 export function isValidAppType(value: string): value is AppType {
   const validTypes: AppType[] = [
-    'vue', 'vue2', 'vue3', 'react', 'svelte', 'solid',
-    'html', 'javascript', 'js', 'typescript', 'ts'
+    'vue',
+    'vue2',
+    'vue3',
+    'react',
+    'svelte',
+    'solid',
+    'html',
+    'javascript',
+    'js',
+    'typescript',
+    'ts',
   ];
   return validTypes.includes(value as AppType);
 }

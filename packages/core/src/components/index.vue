@@ -107,11 +107,7 @@ function initFileSystem() {
   const params = new URLSearchParams(location.search);
   const options = props.options ?? {};
   const appType = params.get('appType') || options.appType || '';
-  if (
-    appType === 'vue2' &&
-    params.get('vueVersion') === null &&
-    options.vueVersion === undefined
-  ) {
+  if (appType === 'vue2' && params.get('vueVersion') === null && options.vueVersion === undefined) {
     store.vueVersion = 2;
   }
   let filesMap = getTemplate(appType) as Record<string, string>;
@@ -124,7 +120,9 @@ function initFileSystem() {
         filesMap = files as Record<string, string>;
       }
     } catch (e) {
-      console.error('Failed to parse files from hash:', e);
+      if (import.meta.env.DEV) {
+        console.error('Failed to parse files from hash:', e);
+      }
     }
   }
 
@@ -148,8 +146,7 @@ function initFileSystem() {
   if (!files[store.entry]) {
     store.entry = Object.keys(files)[0];
   }
-  store.activeFile =
-    params.get('activeFile') || options.activeFile || store.entry;
+  store.activeFile = params.get('activeFile') || options.activeFile || store.entry;
   if (!files[store.activeFile]) {
     store.activeFile = store.entry;
   }
@@ -207,33 +204,37 @@ watch(
     <template v-if="store.isMobile">
       <!-- 移动端选项卡 -->
       <div class="mobile-tabs">
-        <button 
+        <button
           v-if="store.showCode"
-          class="mobile-tab" 
+          class="mobile-tab"
           :class="{ active: store.mobileView === 'code' }"
           @click="store.mobileView = 'code'"
         >
           <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+            <path
+              d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"
+            />
           </svg>
           <span>代码</span>
         </button>
-        <button 
+        <button
           v-if="store.showPreview"
-          class="mobile-tab" 
+          class="mobile-tab"
           :class="{ active: store.mobileView === 'preview' }"
           @click="store.mobileView = 'preview'"
         >
           <svg class="tab-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            <path
+              d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+            />
           </svg>
           <span>预览</span>
         </button>
       </div>
       <!-- 移动端文件栏抽屉 -->
-      <div 
+      <div
         v-if="store.showFileBar"
-        class="mobile-file-drawer" 
+        class="mobile-file-drawer"
         :class="{ open: store.showMobileFileBar }"
       >
         <div class="drawer-overlay" @click="store.showMobileFileBar = false"></div>
@@ -263,12 +264,7 @@ watch(
     <!-- 桌面端布局 -->
     <template v-else>
       <div class="main-content main-content-top">
-        <Splitter
-          min="140px"
-          max="300px"
-          initSplit="160px"
-          :showLeft="store.showFileBar"
-        >
+        <Splitter min="140px" max="300px" init-split="160px" :show-left="store.showFileBar">
           <template #left>
             <FileBar />
           </template>
@@ -277,13 +273,13 @@ watch(
               class="main-splitter"
               min="0%"
               max="100%"
-              :showLeft="store.reverse ? store.showPreview : store.showCode"
-              :showRight="store.reverse ? store.showCode : store.showPreview"
+              :show-left="store.reverse ? store.showPreview : store.showCode"
+              :show-right="store.reverse ? store.showCode : store.showPreview"
             >
-              <template v-slot:[CodeSlotName]>
+              <template #[CodeSlotName]>
                 <CodeEditor />
               </template>
-              <template v-slot:[PreviewSlotName]>
+              <template #[PreviewSlotName]>
                 <Preview />
                 <Loading v-if="!loaded" />
               </template>

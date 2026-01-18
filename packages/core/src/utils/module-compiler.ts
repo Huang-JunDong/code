@@ -18,10 +18,7 @@ import {
   scriptModuleRE,
 } from '@/constant';
 
-export function compileModulesForPreview(
-  files: Record<string, File>,
-  entry: string
-) {
+export function compileModulesForPreview(files: Record<string, File>, entry: string) {
   const seen = new Set<File>();
   const modules: string[] = [];
   processFile(files, files[entry], modules, seen);
@@ -30,12 +27,7 @@ export function compileModulesForPreview(
 }
 
 // similar logic with Vite's SSR transform, except this is targeting the browser
-function processFile(
-  files: Record<string, File>,
-  file: File,
-  modules: string[],
-  seen: Set<File>
-) {
+function processFile(files: Record<string, File>, file: File, modules: string[], seen: Set<File>) {
   if (seen.has(file)) {
     return [];
   }
@@ -45,11 +37,7 @@ function processFile(
     return processHtmlFile(files, file.code, file.filename, modules, seen);
   }
 
-  let [js, importedFiles] = processModule(
-    files,
-    file.compiled.js,
-    file.filename
-  );
+  let [js, importedFiles] = processModule(files, file.compiled.js, file.filename);
   // append css
   if (file.compiled.css) {
     js += `\nwindow.__css__ += ${JSON.stringify(file.compiled.css)}`;
@@ -92,10 +80,7 @@ function processModule(
     importedFiles.add(filename);
     const id = `__import_${importedFiles.size}__`;
     importToIdMap.set(filename, id);
-    s.appendLeft(
-      node.start!,
-      `const ${id} = ${modulesKey}[${JSON.stringify(filename)}]\n`
-    );
+    s.appendLeft(node.start!, `const ${id} = ${modulesKey}[${JSON.stringify(filename)}]\n`);
     return id;
   }
 
@@ -121,10 +106,7 @@ function processModule(
         const importId = defineImport(node, node.source.value);
         for (const spec of node.specifiers) {
           if (spec.type === 'ImportSpecifier') {
-            idToImportMap.set(
-              spec.local.name,
-              `${importId}.${(spec.imported as Identifier).name}`
-            );
+            idToImportMap.set(spec.local.name, `${importId}.${(spec.imported as Identifier).name}`);
           } else if (spec.type === 'ImportDefaultSpecifier') {
             idToImportMap.set(spec.local.name, `${importId}.default`);
           } else {
@@ -217,17 +199,10 @@ function processModule(
         // let binding used in a property shorthand
         // { foo } -> { foo: __import_x__.foo }
         // skip for destructure patterns
-        if (
-          !(parent as any).inPattern ||
-          isInDestructureAssignment(parent, parentStack)
-        ) {
+        if (!(parent as any).inPattern || isInDestructureAssignment(parent, parentStack)) {
           s.appendLeft(id.end!, `: ${binding}`);
         }
-      } else if (
-        parent &&
-        parent.type === 'ClassDeclaration' &&
-        id === parent.superClass
-      ) {
+      } else if (parent && parent.type === 'ClassDeclaration' && id === parent.superClass) {
         if (!declaredConst.has(id.name)) {
           declaredConst.add(id.name);
           // locate the top-most node containing the class declaration
@@ -247,11 +222,7 @@ function processModule(
         const arg = parent.arguments[0];
         if (arg.type === 'StringLiteral' && arg.value.startsWith('./')) {
           s.overwrite(node.start!, node.start! + 6, dynamicImportKey);
-          s.overwrite(
-            arg.start!,
-            arg.end!,
-            JSON.stringify(arg.value.replace(/^\.\/+/, ''))
-          );
+          s.overwrite(arg.start!, arg.end!, JSON.stringify(arg.value.replace(/^\.\/+/, '')));
         }
       }
     },

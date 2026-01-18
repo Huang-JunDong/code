@@ -14,10 +14,8 @@ export function createRemoteLoader<T>(
 
   async function loadFromUrl(url: string): Promise<T> {
     // 使用 Promise.race 实现超时控制
-    const importPromise = import(/* @vite-ignore */ url).then(
-      (module) => module.default || module
-    );
-    
+    const importPromise = import(/* @vite-ignore */ url).then((module) => module.default || module);
+
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error(`Load timeout: ${url}`)), timeout);
     });
@@ -38,9 +36,7 @@ export function createRemoteLoader<T>(
           return cached;
         } catch (error) {
           if (i === urls.length - 1) {
-            throw new Error(
-              `Failed to load module from all sources: ${urls.join(', ')}`
-            );
+            throw new Error(`Failed to load module from all sources: ${urls.join(', ')}`);
           }
         }
       }
@@ -59,14 +55,9 @@ export function createRemoteLoader<T>(
 /**
  * 解析 import-map.json 并检测框架类型
  */
-export function detectFramework(
-  params: CompilerPluginParams,
-  frameworkKeys: string[]
-): boolean {
+export function detectFramework(params: CompilerPluginParams, frameworkKeys: string[]): boolean {
   const { fileMap } = params;
-  const importMapFile = Object.values(fileMap).find(
-    (f) => f.filename === 'import-map.json'
-  );
+  const importMapFile = Object.values(fileMap).find((f) => f.filename === 'import-map.json');
 
   if (!importMapFile) return false;
 
@@ -85,10 +76,7 @@ export function detectFramework(
 /**
  * 收集编译错误的辅助函数
  */
-export function collectErrors(
-  errors: Error[],
-  error: unknown
-): void {
+export function collectErrors(errors: Error[], error: unknown): void {
   if (error instanceof Error) {
     errors.push(error);
   } else {

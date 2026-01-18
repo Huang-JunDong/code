@@ -31,10 +31,7 @@ onMounted(() => {
         tippyDOM.destroy();
       }
       tippyDOM = tippy(reference.value, {
-        content:
-          store.entry === props.filename
-            ? TooltipText.isEntry
-            : TooltipText.SetEntry,
+        content: store.entry === props.filename ? TooltipText.isEntry : TooltipText.SetEntry,
         placement: 'bottom',
         arrow: false,
         theme: store.theme === 'dark' ? '' : 'light',
@@ -52,10 +49,10 @@ onUnmounted(() => {
   <div
     ref="reference"
     class="operate-btn home-operate"
-    @click="resetHomeFile"
     role="button"
     :aria-label="store.entry === props.filename ? '当前入口文件' : '设为入口文件'"
     tabindex="0"
+    @click="resetHomeFile"
     @keydown.enter="resetHomeFile"
     @keydown.space.prevent="resetHomeFile"
   >

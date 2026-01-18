@@ -1,10 +1,6 @@
 import { Uri, editor } from 'monaco-editor';
 
-export function getOrCreateModel(
-  uri: Uri,
-  lang: string | undefined,
-  value: string
-) {
+export function getOrCreateModel(uri: Uri, lang: string | undefined, value: string) {
   const model = editor.getModel(uri);
   if (model) {
     // 确保语言正确设置

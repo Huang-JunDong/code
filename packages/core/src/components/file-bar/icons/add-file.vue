@@ -32,8 +32,8 @@ onUnmounted(() => {
 </script>
 <template>
   <div
-    class="operate-btn"
     ref="reference"
+    class="operate-btn"
     role="button"
     aria-label="新建文件"
     tabindex="0"

@@ -31,8 +31,7 @@ function composedPath(e: any) {
 export default class RightMenu {
   private menu: HTMLElement | null = null;
   private config: ConfigType;
-  private eventList: Array<[Window | Document, string, LiType['callback']]> =
-    [];
+  private eventList: Array<[Window | Document, string, LiType['callback']]> = [];
   private menuStyle = {
     'min-width': '',
     'max-width': '',
@@ -56,10 +55,7 @@ export default class RightMenu {
       this.menuStyle['max-width'] = getValue(config.maxWidth);
     }
     // 获取dom并绑定事件
-    this.domElement =
-      typeof config.el === 'string'
-        ? document.querySelector(config.el)
-        : config.el;
+    this.domElement = typeof config.el === 'string' ? document.querySelector(config.el) : config.el;
     this.boundHandler = (e) => {
       const res = typeof options === 'function' ? options(e, config) : options;
       this.init(e as MouseEvent, res);
@@ -73,10 +69,7 @@ export default class RightMenu {
   destroy(): void {
     this.destroyMenu();
     if (this.domElement && this.boundHandler) {
-      this.domElement.removeEventListener(
-        this.config.mode || 'contextmenu',
-        this.boundHandler
-      );
+      this.domElement.removeEventListener(this.config.mode || 'contextmenu', this.boundHandler);
     }
     this.domElement = null;
     this.boundHandler = null;
@@ -88,10 +81,7 @@ export default class RightMenu {
    * @param thenable 菜单列表
    * @returns { Promise<void> }
    */
-  async init(
-    e: MouseEvent,
-    thenable: ItemType[] | Promise<ItemType[]>
-  ): Promise<void> {
+  async init(e: MouseEvent, thenable: ItemType[] | Promise<ItemType[]>): Promise<void> {
     // 触发生命周期
     this.config.beforeInit?.call(this);
 
@@ -197,11 +187,7 @@ export default class RightMenu {
    * @param { Function } callback 事件回调
    * @returns { void }
    */
-  addEvent(
-    target: Window | Document,
-    eventName: string,
-    callback: LiType['callback']
-  ): void {
+  addEvent(target: Window | Document, eventName: string, callback: LiType['callback']): void {
     target.addEventListener(eventName, callback);
     this.eventList.push([target, eventName, callback]);
   }
@@ -294,10 +280,7 @@ export default class RightMenu {
   createLi<T extends ItemType & { type: 'li' | 'ul' }>(opt: T): HTMLElement {
     const span = this.createDom('p', {}, [String(opt.text)]);
     const attrs = {
-      class: [
-        opt.disabled ? 'menu-disabled' : '',
-        opt.type === 'ul' ? 'menu-ul' : '',
-      ].join(' '),
+      class: [opt.disabled ? 'menu-disabled' : '', opt.type === 'ul' ? 'menu-ul' : ''].join(' '),
     };
     const li = this.createDom('li', filterAttrs(opt, attrs), [span]);
     if (opt.type === 'li' && opt.arrow) {

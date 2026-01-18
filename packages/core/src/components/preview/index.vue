@@ -4,11 +4,7 @@ import { store } from '@/store';
 import { MapFile } from '@/constant';
 import { Compiler } from '@/compiler';
 import Loading from '../loading/index.vue';
-import {
-  Hooks,
-  ComplierPluginParams,
-  ComplierPluginResult,
-} from '@/compiler/type';
+import { Hooks, ComplierPluginParams, ComplierPluginResult } from '@/compiler/type';
 
 const errors = ref<Error[]>([]);
 const previewDOM = ref() as Ref<HTMLDivElement>;
@@ -62,8 +58,7 @@ function setConsoleSafeArea(height: number) {
 
 function getErudaDevtoolsElement() {
   const eruda = (iframe.value?.contentWindow as any)?.__eruda;
-  return (eruda?._shadowRoot?.querySelector?.('.eruda-dev-tools') ??
-    null) as HTMLElement | null;
+  return (eruda?._shadowRoot?.querySelector?.('.eruda-dev-tools') ?? null) as HTMLElement | null;
 }
 
 function updateConsoleSafeArea() {
@@ -169,19 +164,16 @@ const erudaPlugin = (hooks: Hooks) => {
   if (store.showEruda === false) {
     return;
   }
-  hooks.hook(
-    'before-emit',
-    (_: ComplierPluginParams, items: ComplierPluginResult) => {
-      items.modules.unshift(
-        `import eruda from 'https://esm.sh/eruda@3.0.1';
+  hooks.hook('before-emit', (_: ComplierPluginParams, items: ComplierPluginResult) => {
+    items.modules.unshift(
+      `import eruda from 'https://esm.sh/eruda@3.0.1';
 if (window.__eruda) {
   window.__eruda.destroy();
 }
 window.__eruda = eruda;
 eruda.init();`.trim()
-      );
-    }
-  );
+    );
+  });
 
   hooks.hook('after-emit', () => {
     const checkEruda = () => {
@@ -358,7 +350,7 @@ async function refreshSandbox() {
 
 <template>
   <div class="codeplayer-iframe-container">
-    <div class="codeplayer-iframe-host" ref="previewDOM"></div>
+    <div ref="previewDOM" class="codeplayer-iframe-host"></div>
     <Loading v-if="loading" />
   </div>
 </template>

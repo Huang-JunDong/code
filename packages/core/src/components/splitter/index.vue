@@ -105,17 +105,13 @@ const changeStyle = () => {
     }
     leftDOM.value.style.width = '100%';
     leftDOM.value.style.borderBottom =
-      computedSplitBound() && props.showRight
-        ? '1px solid var(--codeplayer-border-color)'
-        : 'none';
+      computedSplitBound() && props.showRight ? '1px solid var(--codeplayer-border-color)' : 'none';
     leftDOM.value.style.borderRight = 'none';
   } else {
     leftDOM.value.style.height = '';
     leftDOM.value.style.width = computedSplitBound() + 'px';
     leftDOM.value.style.borderRight =
-      computedSplitBound() && props.showRight
-        ? '1px solid var(--codeplayer-border-color)'
-        : 'none';
+      computedSplitBound() && props.showRight ? '1px solid var(--codeplayer-border-color)' : 'none';
     leftDOM.value.style.borderBottom = 'none';
   }
   leftDOM.value.style.display = props.showLeft ? 'block' : 'none';
@@ -145,31 +141,25 @@ watch(
 
 <template>
   <div
+    ref="splitterDOM"
     class="codeplayer-splitter"
     :class="{ 'code-player-splitter-vertical': props.vertical }"
-    ref="splitterDOM"
     @mousemove="dragMove"
     @mouseup="dragEnd"
     @mouseleave="dragEnd"
   >
-    <div class="splitter-left" ref="leftDOM">
+    <div ref="leftDOM" class="splitter-left">
       <slot name="left" />
       <div
         ref="draggerDOM"
         :class="`${props.vertical ? 'vertical-dragger' : 'dragger'}`"
         @mousedown="dragStart"
       />
-      <div
-        class="splitter-mask"
-        :class="{ 'splitter-mask-hidden': !showMask }"
-      />
+      <div class="splitter-mask" :class="{ 'splitter-mask-hidden': !showMask }" />
     </div>
-    <div class="splitter-right" ref="rightDOM">
+    <div ref="rightDOM" class="splitter-right">
       <slot name="right" />
-      <div
-        class="splitter-mask"
-        :class="{ 'splitter-mask-hidden': !showMask }"
-      />
+      <div class="splitter-mask" :class="{ 'splitter-mask-hidden': !showMask }" />
     </div>
   </div>
 </template>
