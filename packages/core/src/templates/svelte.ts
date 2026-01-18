@@ -21,12 +21,11 @@ const indexHtml = `
 const mainTs = `
 import App from './App.svelte';
 import './style.css';
+import { mount } from 'svelte';
 
-const app = new App({
+mount(App, {
   target: document.getElementById('app')!,
 });
-
-export default app;
 `.trim();
 
 const appSvelte = `
@@ -157,8 +156,8 @@ h1 {
 const importMap = `
 {
   "imports": {
-    "svelte": "https://esm.sh/svelte@4",
-    "svelte/": "https://esm.sh/svelte@4/"
+    "svelte": "https://esm.sh/svelte@5.46.4",
+    "svelte/": "https://esm.sh/svelte@5.46.4/"
   }
 }
 `.trim();

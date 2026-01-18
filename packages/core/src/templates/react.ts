@@ -47,9 +47,9 @@ export default App;
 const importMap = `
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "react": "https://esm.sh/react@19.2.1",
+    "react-dom": "https://esm.sh/react-dom@19.2.1",
+    "react-dom/": "https://esm.sh/react-dom@19.2.1/",
     "antd": "https://esm.sh/antd@5.12.5?external=react,react-dom,@ant-design/colors&bundle",
     "@ant-design/colors": "https://esm.sh/@ant-design/colors@7.0.0"
   }

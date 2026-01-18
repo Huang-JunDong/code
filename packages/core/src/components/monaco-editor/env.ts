@@ -35,7 +35,14 @@ export function initMonaco(store: Store) {
     const jsxRuntime = detectJsxRuntime(store);
     applyTsCompilerOptions(jsxRuntime);
     if (jsxRuntime === 'react') {
-      void ensureReactTypeLibs();
+      const deps = readImportMapDependencies(store);
+      const reactVersion = deps.react;
+      let typesMajor = '18';
+      if (reactVersion) {
+        const major = reactVersion.split('.')[0];
+        typesMajor = /^\d+$/.test(major) ? major : 'latest';
+      }
+      void ensureReactTypeLibs(typesMajor);
     } else if (jsxRuntime === 'solid') {
       const deps = readImportMapDependencies(store);
       void ensureSolidTypeLibs(deps['solid-js'] || 'latest');
@@ -45,11 +52,7 @@ export function initMonaco(store: Store) {
     for (const filename in store.files || {}) {
       const file = store.files[filename];
       if (editor.getModel(Uri.parse(`file:///${filename}`))) continue;
-      getOrCreateModel(
-        Uri.parse(`file:///${filename}`),
-        getFileLanguage(file.filename),
-        file.code
-      );
+      getOrCreateModel(Uri.parse(`file:///${filename}`), getFileLanguage(file.filename), file.code);
     }
 
     // dispose of any models that are not in the store
@@ -434,7 +437,7 @@ export async function reloadLanguageTools(store: Store, withMarkers = true) {
   let dependencies: Record<string, string> = readImportMapDependencies(store);
 
   if (store.vueVersion) {
-    const version = store.vueVersion.toString() === '2' ? '2.7.15' : '3.3.6';
+    const version = store.vueVersion.toString() === '2' ? '2.7.15' : '3.5.26';
     dependencies = {
       ...dependencies,
       vue: version,
@@ -501,17 +504,9 @@ export async function reloadLanguageTools(store: Store, withMarkers = true) {
   });
   const languageId = ['vue', 'javascript', 'typescript'];
   const getSyncUris = () =>
-    Object.keys(store.files).map((filename) =>
-      Uri.parse(`file:///${filename}`)
-    );
+    Object.keys(store.files).map((filename) => Uri.parse(`file:///${filename}`));
   const disposeMarkers = withMarkers
-    ? volar.editor.activateMarkers(
-        worker,
-        languageId,
-        'vue',
-        getSyncUris,
-        editor as any
-      ).dispose
+    ? volar.editor.activateMarkers(worker, languageId, 'vue', getSyncUris, editor as any).dispose
     : () => {};
   const { dispose: disposeAutoInsertion } = volar.editor.activateAutoInsertion(
     worker,
@@ -597,7 +592,7 @@ export function loadMonacoEnv(store: Store) {
   languages.register({ id: 'scss', extensions: ['.scss'] });
   languages.register({ id: 'sass', extensions: ['.sass'] });
   languages.register({ id: 'json', extensions: ['.json'] });
-  
+
   // Svelte 文件直接使用 HTML 语言服务（在 getFileLanguage 中映射为 'html'）
   // 这样可以获得完整的 HTML 语法高亮和智能提示
 
@@ -631,30 +626,29 @@ export function loadMonacoEnv(store: Store) {
     validate: true,
   });
 
-  store.reloadLanguageTools = (withMarkers = true) =>
-    reloadLanguageTools(store, withMarkers);
+  store.reloadLanguageTools = (withMarkers = true) => reloadLanguageTools(store, withMarkers);
   languages.onLanguage('vue', () => store.reloadLanguageTools!(true));
-  
+
   // 手动设置语言模式，确保智能提示工作
   // Monaco 的 onLanguage 回调在打包后可能不会被正确触发
   // 这会影响所有非 Vue 项目的独立 CSS/HTML/JSON 文件（Solid、React、Svelte 等）
-  
+
   // CSS/LESS/SCSS 语言模式
   setupCssMode(monaco.languages.css.cssDefaults);
   setupCssMode(monaco.languages.css.lessDefaults);
   setupCssMode(monaco.languages.css.scssDefaults);
-  
+
   // HTML 语言模式（包括 Handlebars 和 Razor）
   setupHtmlMode(monaco.languages.html.htmlDefaults);
-  
+
   // JSON 语言模式
   setupJsonMode(monaco.languages.json.jsonDefaults);
-  
+
   // TypeScript/JavaScript 语言模式
   // 手动激活，确保在 js/jsx/ts/tsx 文件中智能提示正常工作
   setupTypeScript(monaco.languages.typescript.typescriptDefaults);
   setupJavaScript(monaco.languages.typescript.javascriptDefaults);
-  
+
   // 通过 setModeConfiguration 确保 completionItems 被启用
   monaco.languages.css.cssDefaults.setModeConfiguration({
     completionItems: true,
@@ -671,7 +665,7 @@ export function loadMonacoEnv(store: Store) {
     documentFormattingEdits: true,
     documentRangeFormattingEdits: true,
   });
-  
+
   monaco.languages.css.lessDefaults.setModeConfiguration({
     completionItems: true,
     hovers: true,
@@ -687,7 +681,7 @@ export function loadMonacoEnv(store: Store) {
     documentFormattingEdits: true,
     documentRangeFormattingEdits: true,
   });
-  
+
   monaco.languages.css.scssDefaults.setModeConfiguration({
     completionItems: true,
     hovers: true,
@@ -703,7 +697,7 @@ export function loadMonacoEnv(store: Store) {
     documentFormattingEdits: true,
     documentRangeFormattingEdits: true,
   });
-  
+
   // HTML 模式配置
   monaco.languages.html.htmlDefaults.setModeConfiguration({
     completionItems: true,
@@ -719,7 +713,7 @@ export function loadMonacoEnv(store: Store) {
     documentFormattingEdits: true,
     documentRangeFormattingEdits: true,
   });
-  
+
   // JSON 模式配置
   monaco.languages.json.jsonDefaults.setModeConfiguration({
     completionItems: true,
@@ -733,19 +727,19 @@ export function loadMonacoEnv(store: Store) {
     documentFormattingEdits: true,
     documentRangeFormattingEdits: true,
   });
-  
+
   // TypeScript/JavaScript 语言配置
   // 为 js/jsx/ts/tsx 文件启用完整的语言支持
   monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
   monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
   applyTsCompilerOptions(detectJsxRuntime(store));
-  
+
   monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
     noSemanticValidation: true,
     noSyntaxValidation: true,
     noSuggestionDiagnostics: true,
   });
-  
+
   monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
     noSemanticValidation: true,
     noSyntaxValidation: true,
