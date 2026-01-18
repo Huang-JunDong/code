@@ -37,7 +37,8 @@ function processFile(files: Record<string, File>, file: File, modules: string[],
     return processHtmlFile(files, file.code, file.filename, modules, seen);
   }
 
-  let [js, importedFiles] = processModule(files, file.compiled.js, file.filename);
+  const [processedJs, importedFiles] = processModule(files, file.compiled.js, file.filename);
+  let js = processedJs;
   // append css
   if (file.compiled.css) {
     js += `\nwindow.__css__ += ${JSON.stringify(file.compiled.css)}`;

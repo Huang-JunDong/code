@@ -41,7 +41,7 @@ async function emitHtml(params: CompilerPluginParams, result: CompilerPluginResu
     iframeDoc.head.appendChild(importMapScript);
     iframeWindow.process = { env: {} };
     iframeWindow[modulesKey] = {};
-    iframeWindow[exportKey] = (mod: Object, key: string, get: () => any) => {
+    iframeWindow[exportKey] = (mod: any, key: string, get: () => any) => {
       Object.defineProperty(mod, key, {
         enumerable: true,
         configurable: true,

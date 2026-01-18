@@ -20,8 +20,6 @@ module.exports = {
   plugins: ['vue', '@typescript-eslint'],
   rules: {
     'vue/multi-word-component-names': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off',
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-debugger': 'warn',
     // 允许使用 any

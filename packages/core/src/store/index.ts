@@ -56,10 +56,14 @@ function safeParseJson<T>(value: string | null, fallback: T): T {
     const decoded = safeDecodeURIComponent(value);
     try {
       return JSON.parse(decoded) as T;
-    } catch {}
+    } catch (error) {
+      void error;
+    }
     try {
       return JSON.parse(value) as T;
-    } catch {}
+    } catch (error) {
+      void error;
+    }
     if (decoded === value) {
       break;
     }

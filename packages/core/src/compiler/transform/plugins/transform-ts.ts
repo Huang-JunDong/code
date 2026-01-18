@@ -10,7 +10,8 @@ export async function transformTS(params: CompilerPluginParams): Promise<Error[]
     files
       .filter(({ filename }) => filename.endsWith('.ts') || filename.endsWith('.js'))
       .map(async (file) => {
-        let { filename, code } = file;
+        const { filename } = file;
+        let { code } = file;
 
         try {
           if (filename.endsWith('.ts')) {

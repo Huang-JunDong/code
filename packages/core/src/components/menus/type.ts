@@ -31,6 +31,8 @@ type GetKeysType<T> = T extends ElementType ? keyof T : never;
 
 type ElementKeysType = GetKeysType<ElementType>;
 
+type MenuLifecycleHook = (this: any) => void;
+
 export type ConfigType = {
   el: string | HTMLElement;
   mode?: 'contextmenu' | 'click'; // 模式, 默认为contextmenu
@@ -43,12 +45,12 @@ export type ConfigType = {
     // 默认参数配置项
     [key in ElementKeysType]?: string;
   };
-  beforeInit?: Function; // 初始化前
-  afterInit?: Function; // 初始化后
-  beforeShow?: Function; // 显示菜单前
-  afterShow?: Function; // 显示菜单后
-  beforeHide?: Function; // 隐藏菜单前
-  afterHide?: Function; // 隐藏菜单后
+  beforeInit?: MenuLifecycleHook; // 初始化前
+  afterInit?: MenuLifecycleHook; // 初始化后
+  beforeShow?: MenuLifecycleHook; // 显示菜单前
+  afterShow?: MenuLifecycleHook; // 显示菜单后
+  beforeHide?: MenuLifecycleHook; // 隐藏菜单前
+  afterHide?: MenuLifecycleHook; // 隐藏菜单后
   color?: 'dark' | 'light';
 };
 
