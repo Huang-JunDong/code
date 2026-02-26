@@ -14,6 +14,37 @@ import {
 } from '@volar/monaco/worker';
 import type { WorkerHost, WorkerMessage } from './env';
 
+const originalFetch = globalThis.fetch.bind(globalThis);
+globalThis.fetch = (input: RequestInfo | URL, init?: RequestInit) => {
+  const rewrite = (url: string) => {
+    try {
+      const u = new URL(url);
+      if (u.hostname === 'cdn.jsdelivr.net') {
+        u.hostname = 'fastly.jsdelivr.net';
+        return u.toString();
+      }
+      return url;
+    } catch {
+      return url;
+    }
+  };
+
+  if (typeof input === 'string') {
+    return originalFetch(rewrite(input), init);
+  }
+
+  if (input instanceof URL) {
+    return originalFetch(new URL(rewrite(input.toString())), init);
+  }
+
+  const req = input as Request;
+  const nextUrl = rewrite(req.url);
+  if (nextUrl === req.url) {
+    return originalFetch(req, init);
+  }
+  return originalFetch(new Request(nextUrl, req.clone()), init);
+};
+
 export interface CreateData {
   tsconfig: {
     compilerOptions?: import('typescript').CompilerOptions;
