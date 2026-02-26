@@ -5,7 +5,7 @@ import { createRemoteLoader, detectFramework, collectErrors, getErrorResult } fr
 // CDN 源配置（主源 + 备选源）
 const SOLID_PRESET_URLS = [
   'https://esm.sh/babel-preset-solid@1.8.6',
-  'https://cdn.jsdelivr.net/npm/babel-preset-solid@1.8.6/+esm',
+  'https://fastly.jsdelivr.net/npm/babel-preset-solid@1.8.6/+esm',
   'https://unpkg.com/babel-preset-solid@1.8.6?module',
 ];
 
