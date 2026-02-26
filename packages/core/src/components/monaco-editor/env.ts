@@ -275,39 +275,39 @@ async function ensureReactTypeLibs(typesMajor: string) {
     await Promise.all([
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/index.d.ts',
-        `https://fastly.jsdelivr.net/npm/@types/react@${typesMajor}/index.d.ts`
+        `https://cdn.jsdmirror.com/npm/@types/react@${typesMajor}/index.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/jsx-runtime.d.ts',
-        `https://fastly.jsdelivr.net/npm/@types/react@${typesMajor}/jsx-runtime.d.ts`
+        `https://cdn.jsdmirror.com/npm/@types/react@${typesMajor}/jsx-runtime.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react/jsx-dev-runtime.d.ts',
-        `https://fastly.jsdelivr.net/npm/@types/react@${typesMajor}/jsx-dev-runtime.d.ts`
+        `https://cdn.jsdmirror.com/npm/@types/react@${typesMajor}/jsx-dev-runtime.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react-dom/index.d.ts',
-        `https://fastly.jsdelivr.net/npm/@types/react-dom@${typesMajor}/index.d.ts`
+        `https://cdn.jsdmirror.com/npm/@types/react-dom@${typesMajor}/index.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/react-dom/client.d.ts',
-        `https://fastly.jsdelivr.net/npm/@types/react-dom@${typesMajor}/client.d.ts`
+        `https://cdn.jsdmirror.com/npm/@types/react-dom@${typesMajor}/client.d.ts`
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/scheduler/index.d.ts',
-        'https://fastly.jsdelivr.net/npm/@types/scheduler/index.d.ts'
+        'https://cdn.jsdmirror.com/npm/@types/scheduler/index.d.ts'
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/scheduler/tracing.d.ts',
-        'https://fastly.jsdelivr.net/npm/@types/scheduler/tracing.d.ts'
+        'https://cdn.jsdmirror.com/npm/@types/scheduler/tracing.d.ts'
       ),
       addExtraLibFromUrl(
         'file:///node_modules/@types/prop-types/index.d.ts',
-        'https://fastly.jsdelivr.net/npm/@types/prop-types/index.d.ts'
+        'https://cdn.jsdmirror.com/npm/@types/prop-types/index.d.ts'
       ),
       addExtraLibFromUrl(
         'file:///node_modules/csstype/index.d.ts',
-        'https://fastly.jsdelivr.net/npm/csstype/index.d.ts'
+        'https://cdn.jsdmirror.com/npm/csstype/index.d.ts'
       ),
     ]);
 
@@ -360,12 +360,12 @@ async function ensureSolidTypeLibs(version: string) {
     await Promise.all([
       addExtraLibFromUrl(
         'file:///node_modules/csstype/index.d.ts',
-        'https://fastly.jsdelivr.net/npm/csstype/index.d.ts'
+        'https://cdn.jsdmirror.com/npm/csstype/index.d.ts'
       ),
       ...dtsFiles.map((name) => {
         const normalized = name.startsWith('/') ? name : `/${name}`;
         const filePath = `file:///node_modules/${pkgName}${normalized}`;
-        const url = `https://fastly.jsdelivr.net/npm/${pkgName}@${version}${normalized}`;
+        const url = `https://cdn.jsdmirror.com/npm/${pkgName}@${version}${normalized}`;
         return addExtraLibFromUrl(filePath, url);
       }),
     ]);

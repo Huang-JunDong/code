@@ -37,7 +37,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
       importTsFromCdn(msg.data.tsVersion),
       locale &&
         fetchJson(
-          `https://fastly.jsdelivr.net/npm/typescript@${msg.data.tsVersion}/lib/${locale}/diagnosticMessages.generated.json`
+          `https://cdn.jsdmirror.com/npm/typescript@${msg.data.tsVersion}/lib/${locale}/diagnosticMessages.generated.json`
         ),
     ]);
     self.postMessage('inited');
@@ -85,7 +85,7 @@ self.onmessage = async (msg: MessageEvent<WorkerMessage>) => {
 async function importTsFromCdn(tsVersion: string) {
   const _module = globalThis.module;
   (globalThis as any).module = { exports: {} };
-  const tsUrl = `https://fastly.jsdelivr.net/npm/typescript@${tsVersion}/lib/typescript.js`;
+  const tsUrl = `https://cdn.jsdmirror.com/npm/typescript@${tsVersion}/lib/typescript.js`;
   // ESM Worker 不支持 importScripts，使用 fetch + eval 加载脚本
   const response = await fetch(tsUrl);
   const scriptText = await response.text();

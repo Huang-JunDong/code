@@ -4,10 +4,10 @@ import { createRemoteLoader, detectFramework, collectErrors, getErrorResult } fr
 // CDN 源配置（主源 + 备选源）
 const SVELTE_COMPILER_URLS = [
   'https://esm.sh/svelte@5.46.4/compiler',
-  'https://fastly.jsdelivr.net/npm/svelte@5.46.4/compiler/index.mjs',
+  'https://cdn.jsdmirror.com/npm/svelte@5.46.4/compiler/index.mjs',
   'https://unpkg.com/svelte@5.46.4/compiler/index.mjs',
   'https://esm.sh/svelte@4/compiler',
-  'https://fastly.jsdelivr.net/npm/svelte@4/compiler/index.mjs',
+  'https://cdn.jsdmirror.com/npm/svelte@4/compiler/index.mjs',
   'https://unpkg.com/svelte@4/compiler/index.mjs',
 ];
 
