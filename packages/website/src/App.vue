@@ -103,7 +103,7 @@ const isOpen = ref(false);
 const options = computed<OnlineEditorOptions>(() => ({
   appType: currentAppType.value as AppType,
   theme: initialTheme,
-  codeSize: 16,
+  codeSize: 15,
   showEruda: true,
   openConsole: true,
   document: 'https://github.com/Huang-JunDong/code#readme',
