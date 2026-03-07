@@ -157,7 +157,7 @@ const newFileError = computed(() => {
       font-size: 12px;
       user-select: none;
       .files-head-left {
-        font-size: @font-size-default;
+        font-size: 14px;
         line-height: 20px;
       }
       .files-head-right {

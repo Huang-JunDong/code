@@ -58,7 +58,7 @@ watch(
     outline: none;
     border: 1px solid var(--codeplayer-brand);
     height: 22px;
-    font-size: 12px;
+    font-size: 14px;
     padding-left: 4px;
     background-color: var(--codeplayer-filebar-bgc);
     color: var(--codeplayer-main-color);

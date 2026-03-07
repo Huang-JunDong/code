@@ -107,8 +107,8 @@ const getIcon = (filename: string) => {
   flex: 1;
   overflow: auto;
   .file-item {
-    font-size: 13px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 20px;
     padding: 4px;
     cursor: pointer;
     display: flex;

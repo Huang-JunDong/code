@@ -50,9 +50,6 @@ export default {
 </script>
 
 <style scoped>
-.mb-4 {
-  margin-bottom: 16px;
-}
 </style>
 `.trim();
 
