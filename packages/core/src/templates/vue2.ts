@@ -57,8 +57,8 @@ const importMap = `
 {
   "imports": {
     "vue": "https://esm.sh/vue@2.7.15",
-    "element-ui": "https://esm.sh/element-ui@2.5.0",
-    "element-ui/": "https://esm.sh/element-ui@2.5.0/"
+    "element-ui": "https://esm.sh/element-ui@2.15.14?deps=vue@2.7.15",
+    "element-ui/": "https://esm.sh/element-ui@2.15.14/"
   }
 }
 `.trim();

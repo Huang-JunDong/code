@@ -44,10 +44,18 @@ const importMap = `
 {
   "imports": {
     "react": "https://esm.sh/react@19.2.1",
+    "react/": "https://esm.sh/react@19.2.1/",
     "react-dom": "https://esm.sh/react-dom@19.2.1",
     "react-dom/": "https://esm.sh/react-dom@19.2.1/",
-    "antd": "https://esm.sh/antd@5.12.5?external=react,react-dom,@ant-design/colors&bundle",
-    "@ant-design/colors": "https://esm.sh/@ant-design/colors@7.0.0"
+    "antd": "https://esm.sh/antd@5.29.3?external=react,react-dom,@ant-design/colors,@ant-design/fast-color,@rc-component/mini-decimal,react-is&bundle",
+    "@ant-design/icons": "https://esm.sh/@ant-design/icons@5.6.1?external=react,react-dom,@ant-design/colors",
+    "@ant-design/colors": "https://fastly.jsdelivr.net/npm/@ant-design/colors@7.2.1/+esm",
+    "@ant-design/fast-color": "https://fastly.jsdelivr.net/npm/@ant-design/fast-color@2.0.6/+esm",
+    "@rc-component/mini-decimal": "https://fastly.jsdelivr.net/npm/@rc-component/mini-decimal@1.1.3/+esm",
+    "antd-style": "https://esm.sh/antd-style@3.7.1?external=react,react-dom,antd",
+    "antd-style/": "https://esm.sh/antd-style@3.7.1/",
+    "react-is": "https://esm.sh/react-is@19.2.1",
+    "react-is/": "https://esm.sh/react-is@19.2.1/"
   }
 }
 `.trim();
