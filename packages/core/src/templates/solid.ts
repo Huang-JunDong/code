@@ -148,8 +148,8 @@ h1 {
 const importMap = `
 {
   "imports": {
-    "solid-js": "https://esm.sh/solid-js@1.8.7",
-    "solid-js/": "https://esm.sh/solid-js@1.8.7/"
+    "solid-js": "https://esm.sh/solid-js@1.9.0",
+    "solid-js/": "https://esm.sh/solid-js@1.9.0/"
   }
 }
 `.trim();

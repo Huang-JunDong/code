@@ -4,9 +4,9 @@ import { createRemoteLoader, detectFramework, collectErrors, getErrorResult } fr
 
 // CDN 源配置（主源 + 备选源）
 const SOLID_PRESET_URLS = [
-  'https://esm.sh/babel-preset-solid@1.8.6',
-  'https://cdn.jsdmirror.com/npm/babel-preset-solid@1.8.6/+esm',
-  'https://unpkg.com/babel-preset-solid@1.8.6?module',
+  'https://esm.sh/babel-preset-solid@1.9.0',
+  'https://cdn.jsdmirror.com/npm/babel-preset-solid@1.9.0/+esm',
+  'https://unpkg.com/babel-preset-solid@1.9.0?module',
 ];
 
 // 使用工厂函数创建带缓存和容灾的加载器
