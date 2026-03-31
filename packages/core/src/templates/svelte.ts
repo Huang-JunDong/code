@@ -49,12 +49,12 @@ const appSvelte = `
   <h1>Hello Svelte!</h1>
   <p class="description">Cybernetically enhanced web apps with less code and no virtual DOM.</p>
   <div class="counter">
-    <button class="btn btn-primary" on:click={decrement}>-</button>
+    <button class="btn btn-primary" onclick={decrement}>-</button>
     <span class="count">{count}</span>
-    <button class="btn btn-primary" on:click={increment}>+</button>
+    <button class="btn btn-primary" onclick={increment}>+</button>
   </div>
   <div class="actions">
-    <button class="btn btn-secondary" on:click={reset}>Reset</button>
+    <button class="btn btn-secondary" onclick={reset}>Reset</button>
   </div>
 </main>
 `.trim();
@@ -156,8 +156,8 @@ h1 {
 const importMap = `
 {
   "imports": {
-    "svelte": "https://esm.sh/svelte@5.46.4",
-    "svelte/": "https://esm.sh/svelte@5.46.4/"
+    "svelte": "https://esm.sh/svelte@5.55.1",
+    "svelte/": "https://esm.sh/svelte@5.55.1/"
   }
 }
 `.trim();
