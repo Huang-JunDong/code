@@ -27,8 +27,8 @@ const { layer } = window['layui'];
 const importMap = `
 {
   "imports": {
-    "layui": "https://esm.sh/layui@2.9.8",
-    "layui/": "https://esm.sh/layui@2.9.8/"
+    "layui": "https://esm.sh/layui@2.13.5",
+    "layui/": "https://esm.sh/layui@2.13.5/"
   }
 }
 `.trim();
